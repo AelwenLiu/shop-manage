@@ -1,0 +1,373 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+<div class="order-info-container">
+    <div class="info-title-h1">订单详情</div>
+    <div class="title">订单号：<span id="orderNo"></span></div>
+    <table id="h1Info" class="info-table width left">
+        <tbody>
+            <tr>
+                <td id="cao"></td>
+                <td id="val"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="order-infos">
+        订单状态：<span id="orderStatus"></span><br>
+        订单金额：<span id="orderMoney" class="show-color"></span><br>
+        交易时间：<span id="orderDateTime"></span><br>
+        付款时间：<span id="orderPayTime"></span><br>
+    </div>
+    
+    <div class="title">房间信息</div>
+    <table class="info-table">
+        <thead>
+            <tr>
+                <th width="40%">消费类型</th>
+                <th>房间号</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="show-color" id="addressType"></td>
+                <td id="roomNo"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="title">技师信息</div>
+    <table class="info-table width left">
+        <tbody>
+            <tr>
+                <td width="100"><img id="techHead" src="" class="haed"></td>
+                <td class="tech-cookies"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="title">项目信息</div>
+    <table class="info-table width">
+        <thead>
+            <tr>
+                <th colspan="2">项目名称</th>
+                <th id="vipText"></th>
+                <th>数量</th>
+                <th>小计</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td width="100"><img id="proHead" src="" class="haed"></td>
+                <td id="proName" style="text-align: left;"></td>
+                <td class="vipValue"></td>
+                <td>1</td>
+                <td class="vipValue show-color"></td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: left;">
+                    <label><input type="radio" name="vip" value="0"> 非会员</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <label><input type="radio" name="vip" value="1"> 会员</label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="price-container">
+        <div class="left-p">
+            <a class="btn-add"><i class="iconfont">&#xe61f;</i> 添加其他变动金额</a>
+            <ul class="changeMoney" style="display: none;">
+
+                <li>优惠金额: <input id="preMoney" type="text" class="input-little">元&nbsp;&nbsp;&nbsp;&nbsp;备注: <input id="preText" type="text" class="input-small"><a class="btn btn-show btn-little" style="border-radius: 0px;" id="submitPre">确定</a></li>
+
+                <li>增加金额: <input id="addMoney" type="text" class="input-little">元&nbsp;&nbsp;&nbsp;&nbsp;备注: <input id="addText" type="text" class="input-small"><a class="btn btn-show btn-little" style="border-radius: 0px;" id="submitAdd">确定</a></li>
+
+            </ul>
+        </div>
+        <div class="right-p text-right no-status-pay">
+            <h2>订单总价： <span class="vipValue"></span></h2>
+            <h3>其他优惠： ¥<span class="preMoney">0</span></h3>
+            <h3>其他增加金额： ¥<span class="addMoney">0</span></h3>
+        </div>
+        <div class="right-p text-right success-status-pay" style="display: none;">
+            <h2>订单总价： ¥<span class="suc-item-pri"></span></h2>
+            <h3>其他优惠： ¥<span class="suc-pre-pri"></span></h3>
+            <h3>其他增加金额： ¥<span class="suc-add-pri"></span></h3>
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div class="position-price">
+        <!-- <a class="submit">确认付款</a> -->
+        <div class="p no-status-pay">应付金额：<span id="payNub"></span></div>
+        <div class="p success-status-pay" style="display: none;">实付金额：<span id="sucPay"></span></div>
+    </div>
+</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(2)').addClass('active');
+    var id = $.cookie('order_info_id');
+    var type = 0;
+    var changePrice = {
+        prePrice: 0,
+        addPrice: 0,
+        preText: '',
+        addText: ''
+    };
+    var getOrderInfo = function(){
+        $().popup({loading: 'true'});
+        $.post(API.getThisOrderInfo, {
+            token: $.cookie('accessToken'),
+            id: id
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            var order = data.list;
+            $('body').attr('data-id', order.order_id);
+            $('#orderNo').text(order.order_num);
+
+            if(order.room_num){
+                $('#addressType').text('在店消费');
+                $('#roomNo').text(order.room_num);
+            }else if(order.order_room_num){
+                $('#addressType').text('技师上门');
+                $('#roomNo').text(order.order_room_num);
+            }
+            $('#techHead').attr('src', HOST + order.massagist_photo);
+            $('.tech-cookies').html('工号：' + order.massagist_no + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;昵称：' + order.massagist_name);
+            // 状态
+            var statusBtn = '';
+            var statusText = '';
+            var cao = '';
+            if(order.order_status == 1){
+                $('#h1Info').hide();
+                if(order.order_pay == 0){
+                    statusText = '<span class="status active">待支付</span>';
+                    cao = '<a class="submit">确认付款</a>';
+                }else{
+                    statusText = '<span class="status do">已完成</span>';
+                    $('.btn-add').hide();
+                    // 
+                    $('.no-status-pay').hide();
+                    $('.success-status-pay').show();
+                    $('#sucPay').text('¥' + order.order_totalprice);
+                    $('.suc-pre-pri').text(order.order_discount_price + ', ' + order.order_reduce);
+                    $('.suc-add-pri').text(order.order_add_price + ', ' + order.order_increase);
+                    $('.suc-item-pri').text(order.order_totalprice - order.order_add_price + parseFloat(order.order_discount_price));
+                }
+            }
+            if(order.order_status == 2){
+                $('#h1Info').hide();
+                $('.left-p').hide();
+                statusText = '<span class="status cancel">已取消</span>';
+                cao = '<a class="btn-prev del">删除订单</a>';
+            }
+            if(order.order_status == 3){
+                $('.left-p').hide();
+                statusBtn = '<a class="btn btn-default btn-little up-work">上钟</a>';
+                statusText = '<span class="status wait">等待上钟</span>';
+                cao = '<a class="btn-prev cancel">取消订单</a>';
+            }
+            if(order.order_status == 4){
+                $('.left-p').hide();
+                statusBtn = '<a class="btn btn-default btn-little down-work">下钟</a>';
+                statusText = '<span class="status active">上钟</span>';
+                if(order.order_addtime == 1){
+                    statusBtn+= '<a class="btn btn-default btn-little add-work">加钟</a>';
+                    var miao = order.order_item_starttime - Date.parse(new Date())/1000;
+                    showTime(miao, 1);
+                }
+                if(order.order_addtime == 2){
+                    showTime(order.order_item_starttime, 2);
+                }
+            }
+            if(order.order_status == 5){
+                $('#h1Info').hide();
+                $('.left-p').hide();
+                statusText = '<span class="status cancel">已删除</span>';
+            }
+            if(order.order_status == 6){
+                $('#h1Info').hide();
+                statusText = '<span class="status active">待确认</span>';
+                cao = '<a class="submit" data-type="1">确认金额后付款</a>';
+            }
+            $('.position-price').append(cao);
+            $('#cao').html(statusBtn);
+            $('#orderStatus').html(statusText);
+            $('#orderMoney').html(order.order_totalprice + '元');
+            $('#orderDateTime').html(new Date(order.order_createtime*1000).format('yyyy-MM-dd hh:mm:ss'));
+            order.order_donetime ? $('#orderPayTime').html(new Date(order.order_donetime*1000).format('yyyy-MM-dd hh:mm:ss')) : $('#orderPayTime').html('待付款');
+
+            $('#proHead').attr('src', HOST+order.item_image);
+            $('#proName').text(order.item_name);
+            if(type == 0){
+                $('#vipText').text('非会员价');
+                $('.vipValue').text('￥'+order.item_price);
+                $('input[name="vip"]:eq(0)').attr('checked', true);
+            }else{
+                $('#vipText').text('会员价');
+                $('.vipValue').text('￥'+order.item_vipprice);
+                $('input[name="vip"]:eq(1)').attr('checked', true);
+            }
+            // if(!changePrice.prePrice){
+            //     changePrice.prePrice = order.order_discount_price;
+            //     $('#preMoney').val(changePrice.prePrice);
+            //     $('.preMoney').text(changePrice.prePrice);
+            // }
+            // if(!changePrice.addPrice){
+            //     changePrice.addPrice = order.order_add_price;
+            //     $('#addMoney').val(changePrice.addPrice);
+            //     $('.addMoney').text(changePrice.addPrice);
+            // }
+            // if(!$('#preText').val()) $('#preText').val(order.order_reduce);
+            // if(!$('#addText').val()) $('#addText').val(order.order_increase);
+            $('#payNub').text('￥'+($('.vipValue').text().split('￥')[1]-changePrice.prePrice) );
+            var _ =(parseFloat($('#payNub').text().split('￥')[1])+parseFloat(changePrice.addPrice));
+            $('#payNub').text('￥'+ _);
+        });
+    }
+    getOrderInfo();
+    // 价格变动
+    $('#submitPre').click(function(){
+        changePrice.prePrice = parseFloat( $('#preMoney').val() ).toFixed(1);
+        changePrice.preText = $.trim( $('#preText').val() );
+        if( changePrice.prePrice && changePrice.preText ){
+            $('#preMoney').val(changePrice.prePrice);
+            $('#preText').val(changePrice.preText);
+            $('.preMoney').text(changePrice.prePrice);
+            getOrderInfo();
+        }else alert('输入格式错误');
+    });
+    $('#submitAdd').click(function(){
+        changePrice.addPrice = parseFloat( $('#addMoney').val() ).toFixed(1);
+        changePrice.addText = $.trim( $('#addText').val() );
+        if( changePrice.addPrice && changePrice.addText ){
+            $('#addMoney').val(changePrice.addPrice);
+            $('#addText').val(changePrice.addText);
+            $('.addMoney').text(changePrice.addPrice);
+            getOrderInfo();
+        }else alert('输入格式错误');
+    });
+    // 会员价切换
+    $('input[name="vip"]').change(function() {
+        type = $(this).val();
+        getOrderInfo();
+    });
+    $('.btn-add').click(function() {
+        $(this).next().toggle(200);
+    });
+    // 上钟操作
+     $('#cao').on('click', 'a.up-work, a.down-work, a.add-work', function(){
+        var action = '';
+        if( $(this).attr('class').indexOf('up-work')>=0 ) action = 'start';
+        if( $(this).attr('class').indexOf('down-work')>=0 ) action = 'end';
+        if( $(this).attr('class').indexOf('add-work')>=0 ) action = 'add';
+        if(confirm('确定操作吗？')){
+            var id = $(this).parent().parent().attr('data-id');
+            $.post(API.pcUpdateOrderStae, {
+                token: $.cookie('accessToken'),
+                id: $('body').attr('data-id'),
+                action: action
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                location.reload();
+            });
+        }
+    });
+    var showTime = function(val, add){
+        let h = Math.floor(val / 60 / 60);
+        let m = Math.floor((val - h * 60 * 60) / 60);
+        let s = Math.floor((val - h * 60 * 60 - m * 60));
+        var jishi = h + ':' + m + ':' + s;
+        $('#val').text(jishi);
+        if(add == 1) val--;
+        else if(add == 2) val++;
+        if (val < 0){
+            jishi = '00:00:00';
+            $('#val').text(jishi);
+        }else{
+            setTimeout(function(){ showTime(val, add); }, 1000);
+        }
+    }
+    // 取消
+    $('.position-price').on('click', '.cancel', function(){
+        if(confirm('确认取消吗？')){
+            $.post(API.updateOrderStatus, {
+                token: $.cookie('accessToken'),
+                id: $('body').attr('data-id'),
+                action: 'cancel',
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                location.reload();
+            });
+        }
+    });
+    // 删除
+    $('.position-price').on('click', '.del', function(){
+        if(confirm('确认删除吗？')){
+            $.post(API.updateOrderStatus, {
+                token: $.cookie('accessToken'),
+                id: $('body').attr('data-id'),
+                action: 'delete',
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                window.location.href = "order-list.html";
+            });
+        }
+    });
+    // 付款
+    $('.position-price').on('click', '.submit', function(){
+        if(confirm('确认付款吗？')){
+            if($(this).attr('data-type')){
+                if(!changePrice.addPrice || !changePrice.prePrice){
+                    alert('请先确认金额，点击添加其他变动金额！');
+                    return;
+                }
+                $.post(API.ConfirmPayment, {
+                    token: $.cookie('accessToken'),
+                    id: $('body').attr('data-id'),
+                    action: 'update',
+                    totalprice: parseFloat($('#payNub').text().split('￥')[1]),
+                    reduce: changePrice.preText,
+                    increase: changePrice.addText,
+                    add_price: changePrice.addPrice,
+                    discount_price: changePrice.prePrice
+                }, function(data){
+                    if(data.errorInfo){alert(data.errorInfo);return;}
+                    $.post(API.ConfirmPayment, {
+                        token: $.cookie('accessToken'),
+                        id: $('body').attr('data-id'),
+                        action: 'confirm',
+                        totalprice: parseFloat($('#payNub').text().split('￥')[1]),
+                        reduce: changePrice.preText,
+                        increase: changePrice.addText,
+                        add_price: changePrice.addPrice,
+                        discount_price: changePrice.prePrice
+                    }, function(data){
+                        if(data.errorInfo){alert(data.errorInfo);return;}
+                        location.reload();
+                    });
+                });
+
+            }else{
+                $.post(API.ConfirmPayment, {
+                    token: $.cookie('accessToken'),
+                    id: $('body').attr('data-id'),
+                    action: 'confirm',
+                    totalprice: parseFloat($('#payNub').text().split('￥')[1]),
+                    reduce: changePrice.preText,
+                    increase: changePrice.addText,
+                    add_price: changePrice.addPrice,
+                    discount_price: changePrice.prePrice
+                }, function(data){
+                    if(data.errorInfo){alert(data.errorInfo);return;}
+                    location.reload();
+                });
+            }
+        }
+    })
+})
+</script>
+</body>
+</html>

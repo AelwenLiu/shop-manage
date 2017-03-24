@@ -1,0 +1,99 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">房间列表</div>
+        <table class="pro-table">
+            <thead>
+                <th class="center">楼层</th>
+                <th class="center">房间号</th>
+                <th class="center">功能</th>
+                <th class="center">人数</th>
+                <th class="center">上架</th>
+                <th class="center">下架</th>
+                <th class="center">操作</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何房间哦</div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(3)').find('dd:eq(0)').addClass('active');
+    // 
+    var getRooms = function(){
+        $.post(API.getRoomList, {
+            token: $.cookie('accessToken')
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                $('.pro-table').hide();
+                return;
+            }
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                // 状态
+                var lowerHTML = '';
+                var topHTML = '';
+                if( _data.room_now_num == 0 && _data.room_status == 2){
+
+                    topHTML = '<input type="radio" class="top" checked>';
+                    lowerHTML = '<input type="radio" class="lower">';
+                }
+                if( _data.room_now_num == 0 && _data.room_status == 3){
+                    topHTML = '<input type="radio" class="top">';
+                    lowerHTML = '<input type="radio" class="lower" checked>';
+                }
+                $('tbody').append('\
+                    <tr data-id="'+_data.room_id+'" data-statu="'+_data.room_status+'">\
+                        <td class="center">'+_data.room_floor+'</td>\
+                        <td class="center">'+_data.room_num+'</td>\
+                        <td class="center">'+_data.room_func+'</td>\
+                        <td class="center">'+_data.room_size+'</td>\
+                        <td class="center">'+topHTML+'</td>\
+                        <td class="center">'+lowerHTML+'</td>\
+                        <td class="center"><a href="javascript:;" class="edit">修改</a></td>\
+                    </tr>');
+            }
+        });
+    }
+    getRooms();
+    // 上下架
+    $('tbody').on('click', 'input', function(){
+        if($(this).parent().parent('tr').attr('data-statu') == 1 && $(this).hasClass('top')) return;
+        if($(this).parent().parent('tr').attr('data-statu') == 5 && $(this).hasClass('lower')) return;
+        var type = 'room';
+            pid = $(this).parent().parent('tr').attr('data-id');
+            action = $(this).attr('class');
+        $().popup({loading: 'true'});
+        $.post(API.updateState, {
+            token: $.cookie('accessToken'),
+            type: type,
+            pid: pid,
+            action: action
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            action=='top' ? alert('房间上架成功') : alert('房间下架成功');
+            location.reload();
+        });
+    });
+    // 修改
+    $('tbody').on('click', '.edit', function(){
+        $.cookie( 'editID', $(this).parent().parent('tr').attr('data-id') );
+        window.location.href = "room-add.html";
+    });
+})
+</script>
+</body>
+</html>

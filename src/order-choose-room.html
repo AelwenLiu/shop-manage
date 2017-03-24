@@ -1,0 +1,106 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+    <div class="order-menu">
+        <a href="order-choose-project.html">选项目</a>
+        <a href="order-choose-tech.html">选技师</a>
+        <a href="order-choose-room.html">选房间</a>
+    </div>
+    <!-- <div class="select-type">
+        <label class="active"><input type="radio" name="type" value="0"> 在店消费</label>
+        <label><input type="radio" name="type" value="1"> 技师上门</label>
+    </div> -->
+    <div class="selectd">已选类目：<span></span></div>
+    
+    <div class="rooms-container"></div>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何房间哦</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(3)').addClass('active');
+    // 
+    // var type = 0;   // 0 在店 1 技师上门
+    // $('input[name="type"]').change(function() {
+    //     type = $(this).val();
+    //     $('.select-type label').removeClass('active');
+    //     $(this).parent('label').addClass('active');
+    // });
+    // 
+    var getProjects = function(){
+        var _data = {
+            token: $.cookie('accessToken'),
+            type: 'backstage'
+        };
+        $.post(API.getRoomList, _data, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                return;
+            }
+            $('.rooms-container').html('');
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                var html = '';
+                html+= '<div class="title-float">'+ _data.floor +'楼</div><div class="rooms">';
+                for(var j=0; j<_data.room.length; j++){
+                    var _room = _data.room[j];
+                    var status = '';
+                    var chooseText = '';
+                    if($.cookie('order_room') && JSON.parse( $.cookie('order_room') ).id == _room.room_id){
+                        chooseText = 'active';
+                    }else{
+                        chooseText = '';
+                    }
+                    if(_room.room_status == 1){
+                        status = '<h4 class="red">已满</h4>'
+                    }
+                    if(_room.room_status != 1 && _room.room_now_num == 0){
+                        status = '<h4 class="null">空</h4>'
+                    }
+                    if(_room.room_status != 1 && _room.room_now_num != 0){
+                        status = '<h4 class="have">'+_room.room_now_num+'</h4>'
+                    }
+                    html+= ('\
+                        <a class="choose '+chooseText+'" data-id="'+_room.room_id+'" data-stu="'+_room.room_status+'">\
+                            <h1>'+ _room.room_num +'</h1>\
+                            <h2>'+ _room.room_func +'</h2>\
+                            <h3>'+ _room.room_size +'人间</h3>'+status+'\
+                        </a>');
+                }
+                html+= ('</div>');
+                $('.rooms-container').append(html);
+            }
+        });
+    }
+    getProjects();
+    // 选择
+    $('.rooms-container').on('click', 'a.choose', function(){
+        if($(this).attr('data-stu') == 1) return;
+        if($(this).attr('class').indexOf('active') >= 0){
+            $(this).removeClass('active');
+            $.cookie('order_room', null);
+        }else{
+            var id = $(this).attr('data-id');
+            var no = $(this).find('h1').text();
+
+            $('.rooms-container').find('a.choose').removeClass('active');
+            $(this).addClass('active');
+            var json = {
+                id: id,
+                no: no
+            };
+            $.cookie('order_room', JSON.stringify(json));
+            if( $.cookie('order_room') && $.cookie('order_tech') && $.cookie('order_project') ){
+                window.location.href = "order-submit.html";
+            }
+        }
+        getCookie();
+    });
+    getCookie();
+})
+</script>
+</body>
+</html>

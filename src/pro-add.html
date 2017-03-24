@@ -1,0 +1,170 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div id="varTitle" class="title">发布项目</div>
+        <div class="section">
+            <table class="table-default">
+                <tr>
+                    <td width="100">项目名称</td>
+                    <td><input id="proName" type="text" class="input-default"></td>
+                </tr>
+                <tr>
+                    <td width="100">项目内容</td>
+                    <td><textarea id="proInfo" class="textarea-default"></textarea></td>
+                </tr>
+                <tr>
+                    <td width="100">项目时长</td>
+                    <td><input id="proTime" type="text" class="input-small">分钟</td>
+                </tr>
+                <tr>
+                    <td width="100">项目价格</td>
+                    <td>
+                        ￥ <input id="proPrice" type="text" class="input-little">
+                        会员价 ￥ <input id="proVip" type="text" class="input-little">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="section">
+            <h1>项目图片</h1>
+            <div class="update-img" style="width: 300px;">
+                <img src="img/up-load.jpg" class="file-add" style="width: 100%;">
+                <a class="del-img delBanner">删除</a>
+            </div>
+        </div>
+        
+        <button id="submit" class="btn btn-show">发布</button>
+        <button class="btn btn-hide">发布中...</button>
+    </div>
+    <div class="clear"></div>
+    <input type="file" accept="image/gif,image/jpeg,image/jpg,image/png" id="fileCrop">
+</div>
+<div class="dialog bigger crop-wrap">
+    <div class="title">编辑图片<a class="close">&times;</a></div>
+    <div class="container">
+        <div id="wrap"></div>
+        <div style="margin-top: 10px;">
+            <button class="btn btn-default btn-small close">取消</button>
+            <button id="saveImg" class="btn btn-show btn-small">确定</button>
+            <button class="btn btn-hide btn-small">上传中...</button>
+        </div>
+    </div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript" src="js/jQuery/cropper.js"></script>
+<script type="text/javascript" src="js/exif.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(2)').find('dd:eq(1)').addClass('active');
+    var imageURL = null;
+    // 获取是否修改
+    if($.cookie('editID')){
+        $('#varTitle').text('修改项目');
+        $.post(API.getObejctInfo, {
+            token: $.cookie('accessToken'),
+            type: 'project',
+            pid: $.cookie('editID')
+        }, function(data){
+            if(data.errorInfo){history.go(-1);return;}
+            $('#proName').val(data.object.item_name);
+            $('#proInfo').val(data.object.item_intro);
+            $('#proTime').val(data.object.item_time);
+            $('#proPrice').val(data.object.item_price);
+            $('#proVip').val(data.object.item_vipprice);
+            imageURL = data.object.item_image;
+            $('.file-add').attr('src', HOST + imageURL).removeClass('file-add');
+            $('.delBanner').show();
+        });
+    }
+    // 选择图片
+    $(document).on('click', '.file-add', function(){ $('#fileCrop').click(); });
+    // 选择图片
+    $('#fileCrop').change(function(){
+        $('#wrap').html('<img class="cropper">')
+        var file = document.getElementById('fileCrop').files[0];
+        $().popup({container: '.crop-wrap'});
+        EXIF.getData(file, function(){
+            var obj = Object.assign({}, EXIF.getAllTags(this))
+            orientation = obj.Orientation
+        });
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            Common.getImgData(e.target.result, orientation, function(data){
+                var pic = new Image()
+                pic.src = data
+                pic.onload= function() {
+                    $('.cropper').attr('src', data);
+                    setTimeout(function(){
+                        $(".cropper").cropper({aspectRatio: 1 / 0.466});
+                    }, 100);
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+    // 裁剪
+    $('#saveImg').click(function(){
+        $(this).hide().next('.btn-hide').show();
+        var dataURL = $(".cropper").cropper("getDataURL");
+        var picURL = dataURL.replace(/^.*?,/, '');
+        $.post(API.uploadImage, {
+            token: $.cookie('accessToken'),
+            base64: picURL
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            imageURL = data.list;
+            $('.file-add').attr('src', HOST + imageURL).removeClass('file-add');
+            $('.delBanner').show();
+            $('#saveImg').show();
+            $('.btn-hide').hide();
+            $().popup({container: '.crop-wrap', close: true});
+        });
+    });
+    // 删除
+    $('.delBanner').click(function(event) {
+        imageURL = null;
+        var self = $(this).prev('img');
+        self.attr('src', 'img/up-load.jpg').addClass('file-add');
+        $('.delBanner').hide();
+    });
+    // 提交
+    $('#submit').click(function(event) {
+        var proName = $.trim($('#proName').val());
+        var proInfo = $.trim($('#proInfo').val());
+        var proTime = parseInt($('#proTime').val());
+        var proPrice = parseInt($('#proPrice').val());
+        var proVip = parseInt($('#proVip').val());
+        if(!proName || !proInfo || !proTime || !proPrice || !proVip){
+            alert('内容不有为空');
+            return;
+        }
+        $(this).hide().next('.btn-hide').show();
+        var _data = {
+            token: $.cookie('accessToken'),
+            type: 'project',
+            name: proName,
+            price: proPrice,
+            vipprice: proVip,
+            image: imageURL,
+            intro: proInfo,
+            time: proTime,
+        };
+        if($.cookie('editID')) _data.id = $.cookie('editID');
+        $.post(API.updateObjectInfo, _data, function(data){
+            $('#submit').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('发布成功');
+            window.location.href = "pro-list.html";
+        });
+    });
+})
+</script>
+</body>
+</html>

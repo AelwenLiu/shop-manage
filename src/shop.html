@@ -1,0 +1,71 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">店铺信息</div>
+        <a id="noImgs" href="shop-edit.html"><img src="img/up-load.jpg"></a>
+        <div class="mobile-image">
+            <div class="flicking_con"></div>
+            <div class="main_image">
+                <ul id="imgs"></ul>
+            </div>
+        </div>
+        <h1 id="shopName"></h1>
+        <div class="info"><i class="iconfont">&#xe603;</i> <span id="shopAddress"></span></div>
+        <div class="info"><i class="iconfont">&#xe7c9;</i> <span id="shopTel"></span></div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript" src="./js/jQuery/jquery.touchSlider.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(0)').find('dd:eq(0)').addClass('active');
+    var imgs = function(){
+        $(".main_image").touchSlider({
+            flexible : true,
+            speed : 200,
+            btn_prev : $("#btn_prev"),
+            btn_next : $("#btn_next"),
+            paging : $(".flicking_con a"),
+            counter : function (e){
+                $(".flicking_con a").removeClass("on").eq(e.current-1).addClass("on");
+            }
+        });
+    };
+    // 获取店铺信息
+    $.post(API.getShopInfo, {
+        token: $.cookie('accessToken')
+    }, function(data){
+        if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+        $('#shopName').text(data.object.info.store_name);
+        $('#shopAddress').text(data.object.info.store_address);
+        $('#shopTel').text(data.object.info.store_tel);
+        if(data.object.info.store_logo){
+            $.cookie('logo', HOST + data.object.info.store_logo, { expires: 7, path: '/' });
+            $.cookie('webName', data.object.info.store_name, { expires: 7, path: '/' });
+            showWebLogo();
+        }
+        if(data.object.imgs && data.object.imgs.length > 0){
+            $('#noImgs').hide();
+            $('.mobile-image').show();
+            for(var i=0; i<data.object.imgs.length; i++){
+                $('.flicking_con').append('<a></a>');
+                $('#imgs').append('<li><span style="background-image: url('+ HOST + data.object.imgs[i].image_address +')"></span></li>');
+            };
+            imgs();
+        }else{
+            $('#noImgs').show();
+            $('.mobile-image').hide();
+        }
+    });
+})
+</script>
+</body>
+</html>

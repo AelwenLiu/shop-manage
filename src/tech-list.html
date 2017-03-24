@@ -1,0 +1,108 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">技师列表</div>
+        <table class="pro-table">
+            <thead>
+                <th class="">头像</th>
+                <th class="center">工号</th>
+                <th class="center">昵称</th>
+                <th class="center">年龄</th>
+                <th class="center">籍贯</th>
+                <th class="center">性别</th>
+                <th class="center">上架</th>
+                <th class="center">下架</th>
+                <th class="center">操作</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何技师哦</div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(1)').find('dd:eq(0)').addClass('active');
+    // 
+    var getProjects = function(){
+        $.post(API.getMassagistList, {
+            token: $.cookie('accessToken'),
+            state: 'all'
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                $('.pro-table').hide();
+                return;
+            }
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                // 状态
+                var lowerHTML = '';
+                var topHTML = '';
+                if(_data.massagist_status == 2){
+                    topHTML = '<input type="radio" class="top" checked>';
+                    lowerHTML = '<input type="radio" class="lower">';
+                }
+                if(_data.massagist_status == 3){
+                    topHTML = '<input type="radio" class="top">';
+                    lowerHTML = '<input type="radio" class="lower" checked>';
+                }
+                // 格式化头像
+                if(_data.massagist_photo.indexOf('http')<0) _data.massagist_photo = HOST + _data.massagist_photo;
+                // 性别
+                var sex = '';
+                (_data.massagist_sex == 1) ? sex = '男' : sex = '女';
+                $('tbody').append('\
+                    <tr data-id="'+_data.massagist_id+'" data-statu="'+_data.massagist_status+'">\
+                        <td><img src="'+_data.massagist_photo+'" alt="" class="head"></td>\
+                        <td class="center">'+_data.massagist_no+'</td>\
+                        <td class="center">'+_data.massagist_name+'</td>\
+                        <td class="center">'+_data.massagist_birth+'</td>\
+                        <td class="center">'+_data.massagist_native+'</td>\
+                        <td class="center">'+sex+'</td>\
+                        <td class="center">'+topHTML+'</td>\
+                        <td class="center">'+lowerHTML+'</td>\
+                        <td class="center"><a href="javascript:;" class="edit">修改</a></td>\
+                    </tr>');
+            }
+        });
+    }
+    getProjects();
+    // 上下架
+    $('tbody').on('click', 'input', function(){
+        if($(this).parent().parent('tr').attr('data-statu') == 2 && $(this).hasClass('top')) return;
+        if($(this).parent().parent('tr').attr('data-statu') == 3 && $(this).hasClass('lower')) return;
+        var type = 'technician';
+            pid = $(this).parent().parent('tr').attr('data-id');
+            action = $(this).attr('class');
+        $().popup({loading: 'true'});
+        $.post(API.updateState, {
+            token: $.cookie('accessToken'),
+            type: type,
+            pid: pid,
+            action: action
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            action=='top' ? alert('技师上架成功') : alert('技师下架成功');
+            location.reload();
+        });
+    });
+    // 修改
+    $('tbody').on('click', '.edit', function(){
+        $.cookie( 'editID', $(this).parent().parent('tr').attr('data-id') );
+        window.location.href = "tech-add.html";
+    });
+})
+</script>
+</body>
+</html>

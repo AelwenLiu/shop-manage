@@ -1,0 +1,239 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">编辑店铺信息<a href="shop-reg.html">录入店铺资料</a></div>
+        <div class="section">
+            <h1>店铺图片<span>(最多上传5张)</span></h1>
+            <ul id="bannersWrap">
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <div class="clear"></div>
+            </ul>
+        </div>
+        <div class="section">
+            <h1>上传LOGO</h1>
+            <img src="img/up-logo.jpg" class="update-logo-btn">
+            <input type="file" accept="image/gif,image/jpeg,image/jpg,image/png" id="fileCrop">
+            <div id="logoDate" class="hide"><a class="del-img" id="delLogo">删除</a></div>
+        </div>
+        <div class="section">
+            <table class="table-default">
+                <tr>
+                    <td width="100">店铺名称</td>
+                    <td><input id="shopName" type="text" class="input-default"></td>
+                </tr>
+                <tr>
+                    <td width="100">店铺地址</td>
+                    <td><input id="shopAddress" type="text" class="input-default"></td>
+                </tr>
+                <tr>
+                    <td width="100">联系方式</td>
+                    <td><input id="shopTel" type="text" class="input-default"></td>
+                </tr>
+                <tr>
+                    <td width="100">口令</td>
+                    <td><input id="shopCode" type="text" class="input-default"></td>
+                </tr>
+            </table>
+        </div>
+        <button class="btn btn-show" id="submit">发布</button>
+        <button class="btn btn-hide">发布中...</button>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="dialog bigger crop-wrap">
+    <div class="title">编辑图片<a class="close">&times;</a></div>
+    <div class="container">
+        <div id="wrap"></div>
+        <div style="margin-top: 10px;">
+            <button class="btn btn-default btn-small close">取消</button>
+            <button id="saveImg" class="btn btn-show btn-small">确定</button>
+            <button class="btn btn-hide btn-small">上传中...</button>
+        </div>
+    </div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript" src="js/jQuery/cropper.js"></script>
+<script type="text/javascript" src="js/exif.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(0)').find('dd:eq(1)').addClass('active');
+    // logo
+    var logo = null;
+    var banners = [];
+    var activeType = 1; //1：上传logo; 2：上传banner
+    // 显示logo
+    var showLogo = function(type){
+        if(type){
+            $('.update-logo-btn').hide();
+            $('#logoDate').show().css('backgroundImage', 'url('+HOST + logo+')');
+            $('#logoDate .del-img').show();
+            $.cookie('logo', HOST + logo, { expires: 7, path: '/' });
+            showWebLogo();
+        }else{
+            $('#logoDate').hide();
+            logo = null;
+            $.cookie('logo', logo);
+            $('.update-logo-btn').show();
+            showWebLogo();
+        }
+    }
+    // 显示banner
+    var showBanners = function(){
+        for(var i=0; i<5; i++){
+            if(banners[i]){
+                $('#bannersWrap li:eq(' + i + ')').find('img').attr('src', HOST + banners[i]).removeClass('file-add');
+                $('#bannersWrap li:eq(' + i + ')').find('a').show();
+            }else{
+                $('#bannersWrap li:eq(' + i + ')').find('img').attr('src', 'img/up-load.jpg').addClass('file-add');
+                $('#bannersWrap li:eq(' + i + ')').find('a').hide();
+            }
+        }
+    }
+    // 获取店铺信息
+    $.post(API.getShopInfo, {
+        token: $.cookie('accessToken')
+    }, function(data){
+        if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+        $('#shopName').val(data.object.info.store_name);
+        $('#shopAddress').val(data.object.info.store_address);
+        $('#shopTel').val(data.object.info.store_tel);
+        $('#shopCode').val(data.object.info.store_checkcode);
+        if(data.object.info.store_logo){
+            logo = data.object.info.store_logo;
+            showLogo(true);
+        }else{
+            showLogo(false);
+        }
+        $.cookie('webName', data.object.info.store_name, { expires: 7, path: '/' });
+        showWebLogo();
+        if(data.object.imgs && data.object.imgs.length > 0){
+            banners = [];
+            for(var i=0; i<data.object.imgs.length; i++){
+                banners.push(data.object.imgs[i].image_address);
+            }
+            showBanners();
+        }
+    });
+    // 选择banner图片
+    $(document).on('click', '.file-add', function(){
+        activeType = 2;
+        $('#fileCrop').click();
+    });
+    // 选择logo图片
+    $('.update-logo-btn').click(function(){
+        activeType = 1;
+        $('#fileCrop').click();
+    });
+    // 选择图片
+    $('#fileCrop').change(function(){
+        $('#wrap').html('<img class="cropper">')
+        var file = document.getElementById('fileCrop').files[0];
+        $().popup({container: '.crop-wrap'});
+        EXIF.getData(file, function(){
+            var obj = Object.assign({}, EXIF.getAllTags(this))
+            orientation = obj.Orientation
+        });
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            Common.getImgData(e.target.result, orientation, function(data){
+                var pic = new Image()
+                pic.src = data
+                pic.onload= function() {
+                    $('.cropper').attr('src', data);
+                    setTimeout(function(){
+                        if(activeType == 1) $(".cropper").cropper({aspectRatio: 1 / 1});
+                        if(activeType == 2) $(".cropper").cropper({aspectRatio: 1 / 0.466});
+                    }, 100);
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+    // 裁剪
+    $('#saveImg').click(function(){
+        $(this).hide().next('.btn-hide').show();
+        var dataURL = $(".cropper").cropper("getDataURL");
+        var picURL = dataURL.replace(/^.*?,/, '');
+        $.post(API.uploadImage, {
+            token: $.cookie('accessToken'),
+            base64: picURL
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            if(activeType == 1){
+                logo = data.list;
+                showLogo(true);
+            }
+            if(activeType == 2){
+                banners.push(data.list);
+                showBanners();
+            }
+            $('#saveImg').show();
+            $('.btn-hide').hide();
+            $().popup({container: '.crop-wrap', close: true});
+        });
+    });
+    // 删除logo
+    $('#delLogo').click(function(event) { showLogo(false); });
+    // 删除banners
+    $('.delBanner').click(function(event) {
+        var self = $(this).prev('img');
+        banners.remove( self.attr('src').split(HOST)[1] );
+        showBanners();
+    });
+    // 发布
+    $('#submit').click(function(){
+        if(banners.length <= 0){
+            alert('请上传店铺图片');
+            return;
+        }
+        if($('#shopName').val().length <= 0 || $('#shopAddress').val().length <= 0 || $('#shopTel').val().length <= 0){
+            alert('店铺信息不能为空！');
+            return;
+        }
+        var self = $(this);
+        self.hide().next('.btn-hide').show();
+        $.post(API.updateShopInfo, {
+            token: $.cookie('accessToken'),
+            carousel: banners,
+            logo: logo,
+            name: $('#shopName').val(),
+            address: $('#shopAddress').val(),
+            tel: $('#shopTel').val(),
+            checkcode: $('#shopCode').val(),
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);location.reload();return;}
+            alert('恭喜你，发布成功！');
+            self.show().next('.btn-hide').hide();
+            window.location.href = "shop.html";
+        });
+    });
+})
+</script>
+</body>
+</html>

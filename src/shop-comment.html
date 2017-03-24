@@ -1,0 +1,183 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">店铺评价</div>
+        <div class="section">
+            <table>
+                <tr>
+                    <td class="td-start">
+                        <em id="shopScore"></em><br>
+                        <span id="shopStart"></span>
+                    </td>
+                    <td class="td-pl-ch">
+                        <a class="plbtn active">全部(<span id="allCommentsNumber"></span>)</a>
+                        <a class="plbtn">好评(<span id="goodCommentsNumber"></span>)</a>
+                        <a class="plbtn">中评(<span id="middleCommentsNumber"></span>)</a>
+                        <a class="plbtn">差评(<span id="badCommentsNumber"></span>)</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="commentWrap">
+            
+        </div>
+        <div class="pages"></div>
+        <div class="no"><i class="iconfont">&#xe604;</i>没有相关评论</div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(0)').find('dd:eq(2)').addClass('active');
+    // 获取评价信息
+    var type = null;  // 不传代表全部 1 好评 2中评 3差评
+    var page = 1;
+    var getComments = function(){
+        $().popup({loading: 'true'});
+        $.post(API.getShopComments, {
+            token: $.cookie('accessToken'),
+            type: type,
+            page: page
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            $('#commentWrap').html('');
+            $('#allCommentsNumber').text(data.object.all);
+            $('#goodCommentsNumber').text(data.object.good);
+            $('#middleCommentsNumber').text(data.object.middle);
+            $('#badCommentsNumber').text(data.object.bad);
+            $('#shopScore').text(data.object.store + '.0');
+            // 店铺评星
+            $('#shopStart').html('');
+            for(var s=0; s<5; s++){
+                if(s<data.object.store) $('#shopStart').append('<i class="iconfont start active">&#xe641;</i>');
+                else $('#shopStart').append('<i class="iconfont start">&#xe641;</i>');
+            }
+            // 分页按钮
+            $('.pages').html('');
+            if(page == 1){
+                $('.pages').append('<a class="active">1</a>');
+            }else{
+                $('.pages').append('<a>1</a>');
+            }
+            for(var lp=page-4; lp<=page; lp++){
+                if(lp<=1 || lp>=data.object.page_num) continue;
+                if(page == lp){
+                    $('.pages').append('<a class="active">'+lp+'</a>');
+                }else{
+                    $('.pages').append('<a>'+lp+'</a>');
+                }
+            }
+            for(var np=page+1; np<page+5; np++){
+                if(np>=data.object.page_num) continue;
+                if(page == np){
+                    $('.pages').append('<a class="active">'+np+'</a>');
+                }else{
+                    $('.pages').append('<a>'+np+'</a>');
+                }
+            }
+            if(data.object.page_num != 1){
+                if(page == data.object.page_num){
+                    $('.pages').append('<a class="active">'+data.object.page_num+'</a>');
+                }else{
+                    $('.pages').append('<a>'+data.object.page_num+'</a>');
+                }
+            }
+                
+            // 循环输出评论列表
+            if(data.list.length > 0){
+                $('.no').hide();
+                $('#commentWrap').show();
+                for(var i=0; i<data.list.length; i++){
+                    var _data = data.list[i];
+                    var starts = '';
+                    var tags = '';
+                    var replys = '';
+                    // 格式化头像
+                    if(_data.wechat_headimgurl.indexOf('http')<0) _data.wechat_headimgurl = HOST + _data.wechat_headimgurl;
+                    // 评星
+                    for(var j=0; j<5; j++){
+                        if(j<_data.comment_score_store) starts+= '<i class="iconfont start active">&#xe641;</i>';
+                        else starts+= '<i class="iconfont start">&#xe641;</i>';
+                    }
+                    // 标签
+                    for(var b=0; b<_data.comment_store_label.length; b++){
+                        tags+= '<i>'+ Common.storeLabel[b] +'</i>';
+                    }
+                    // 回复内容
+                    for(var r=0; r<_data.reply.length; r++){
+                        replys+= '<div class="replys">回复：'+ _data.reply[r].comment +'</div>';
+                    }
+                    $('#commentWrap').append('\
+                        <div class="comment-container">\
+                            <img src="'+_data.wechat_headimgurl+'" alt="" class="head">\
+                            <h4>'+_data.wechat_nickname+'</h4>\
+                            <div class="fonts">'+starts+'</div>\
+                            <div class="tags">'+tags+'</div>\
+                            <p>'+_data.comment+'</p>'+replys+'\
+                            <div class="replys hide">\
+                                回复: <input type="text" class="input-small" name=""> <button class="btn btn-show btn-small submit-reply" data-id="'+_data.comment_id+'">回复</button><button class="btn btn-hide btn-small">回复中...</button>\
+                            </div>\
+                            <button class="btn btn-default btn-small reply reply-com">回复</button>\
+                            <div class="clear"></div>\
+                        </div>'
+                    );
+                };
+            }else{
+                $('.no').show();
+                $('#commentWrap').hide();
+                $('.pages').hide();
+            }
+            $().popup({loading: 'false'});
+        });
+    };
+    getComments();
+
+    // 翻页
+    $('.pages').on('click', 'a', function(){
+        page = parseInt($(this).text());
+        getComments();
+    });
+    // 切换评价类型
+    $('.td-pl-ch a').click(function(){
+        $('.td-pl-ch a').removeClass('active');
+        $(this).addClass('active');
+        type = $(this).index();
+        page = 1;
+        getComments();
+    })
+
+    // 回复
+    $(document).on('click', '.reply-com', function(){
+        $(this).hide().prev('.replys').show();
+    });
+    $(document).on('click', '.submit-reply', function(){
+        if($(this).prev('input').val().length <= 0){
+            alert('请填写回复内容！');
+            return;
+        }
+        $(this).hide().next('.btn-hide').show();
+        var comment = $(this).prev('input').val();
+        var id = $(this).attr('data-id');
+        $.post(API.replyUserComment, {
+            token: $.cookie('accessToken'),
+            comment: comment,
+            comment_id: id
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);}
+            location.reload();
+        });
+    });
+
+        
+})
+</script>
+</body>
+</html>

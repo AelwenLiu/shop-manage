@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telphone=no, email=no"/>
+    <title>养生汇系统</title>
+    <link rel="stylesheet" href="./css/base.css?v=0.0.1">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.1">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.1">
+</head>
+<body>
+<div class="menu-container">
+    <div class="main">
+        <div class="logo">店铺LOGO</div>
+        <div class="shop-info"><span id="shopTopName"></span> <a id="exit">退出</a></div>
+        <a class="menu" href="#"><img src="img/ico-vip.png"></a>
+        <a class="menu" href="shop.html"><img src="img/ico-submit.png"></a>
+        <a class="menu" href="order-list.html"><img src="img/ico-order.png"></a>
+        <a class="menu" href="order-choose-project.html"><img src="img/ico-shop.png"></a>
+    </div>
+</div>
+<div class="main-container order-list">
+    <div class="tab">
+        <a class="active" data-type="">当天</a>
+        <a data-type="week">一周内</a>
+        <a data-type="month">一月内</a>
+    </div>
+    <table class="header">
+        <tr>
+            <th width="20%">订单信息</th>
+            <th width="25%">项目</th>
+            <th width="10%">技师</th>
+            <th width="10%">订单金额</th>
+            <th width="10%">房间</th>
+            <th width="15%">订单状态</th>
+            <th width="10%">订单操作</th>
+        </tr>
+    </table>
+    <div class="order-list-container"></div>
+    <div class="tools">
+        <a class="export">导出Excel表格</a>
+        <div class="pages"></div>
+    </div>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有任何订单哦</div>
+</div>
+
+<div class="dialog big update-pwd">
+    <div class="title">导出数据<a class="close">&times;</a></div>
+    <div class="container">
+        <table class="table-default">
+            <tr>
+                <td align="right">开始日期：</td>
+                <td><input id="start" type="text" class="input-default laydate-icon" onclick="laydate({max: laydate.now()})" name=""></td>
+            </tr>
+            <tr>
+                <td align="right">结束日期：</td>
+                <td><input id="end" type="text" class="input-default laydate-icon" onclick="laydate({max: laydate.now()})" name=""></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td align="left">
+                    <button class="btn btn-default btn-small close">取消</button>
+                    <button class="btn btn-show btn-small" id="upsbumit">确定</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="main-footer">&copy; 2017强适信息科技（上海）有限公司</div>
+<script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/jquery.popup.js"></script>
+<script type="text/javascript" src="./js/api.js"></script>
+<script type="text/javascript">
+var Common = {
+    backLogin: function(){window.location.href = "login.html";},
+    getImgData: function(img, dir, next) {
+        let image = new Image();
+        image.onload = function(){
+            let degree = 0,drawWidth,drawHeight,width,height;
+            drawWidth = this.naturalWidth;
+            drawHeight = this.naturalHeight;
+            if(drawWidth > 2000 || drawHeight > 2000){
+                drawWidth = drawWidth / 3;
+                drawHeight = drawHeight / 3;
+            }
+            let canvas = document.createElement('canvas');
+            canvas.width = width = drawWidth;
+            canvas.height = height = drawHeight; 
+            let context = canvas.getContext('2d');
+            let isRouter = true;
+            //判断图片方向，重置canvas大小，确定旋转角度，iphone默认的是home键在右方的横屏拍摄方式
+            switch(dir){
+                //iphone横屏拍摄，此时home键在左侧
+                case 3:
+                    degree = 180;
+                    drawWidth = -width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在下方(正常拿手机的方向)
+                case 6:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 90;
+                    drawWidth = width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在上方
+                case 8:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 270;
+                    drawWidth = -width;
+                    drawHeight = height;
+                    break;
+            }
+            //使用canvas旋转校正
+            context.rotate(degree * Math.PI / 180);
+            context.drawImage(this, 0 , 0, drawWidth, drawHeight);
+            next(canvas.toDataURL(0.7));
+        }
+        image.src = img;
+    },
+    storeLabel: [ '环境优雅', '设备完善', '价格合理', '下次还来', '环境一般', '设施一般', '性价比低', '有待提高', '环境恶劣', '设施陈旧', '价格坑爹', '绝不再来'
+    ],
+    tecLabel: [ '服务热情', '手法专业', '态度很好', '颜值爆表', '服务一般', '手法一般', '态度一般', '看的过去', '服务太差', '手法太差', '态度恶劣', '惨不忍睹'
+    ]
+};
+Array.prototype.remove = function(val) {
+  var index = this.indexOf(val);
+  if (index > -1) {
+    this.splice(index, 1);
+  }
+};
+Date.prototype.format = function(format) {
+   var date = {
+          "M+": this.getMonth() + 1,
+          "d+": this.getDate(),
+          "h+": this.getHours(),
+          "m+": this.getMinutes(),
+          "s+": this.getSeconds(),
+          "q+": Math.floor((this.getMonth() + 3) / 3),
+          "S+": this.getMilliseconds()
+   };
+   if (/(y+)/i.test(format)) {
+          format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+   }
+   for (var k in date) {
+          if (new RegExp("(" + k + ")").test(format)) {
+                 format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                        ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+          }
+   }
+   return format;
+}
+var showWebLogo = function(){
+    if($.cookie('logo')){
+        $('.logo').html('<img src="'+ $.cookie('logo') +'">');
+    }
+    if($.cookie('webName')){
+        $('#shopTopName').text($.cookie('webName'));
+    }
+}
+var getCookie = function(){
+    $('.selectd span').html('');
+    $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_project')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_tech')){
+        $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
+    if($.cookie('order_room')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
+        $('.order-menu').find('a:eq(2)').addClass('active');
+    }
+};
+$(function(){
+    if (!!window.ActiveXObject || "ActiveXObject" in window)  {
+        $('body').before('<div class="chrome">您的浏览器版本过低，部分功能无法使用，请下载chrome谷歌浏览器！<a href="http://rj.baidu.com/soft/detail/14744.html" target="_blank">去下载</a></div>')
+    };
+    showWebLogo();
+    // 删除cookies
+    $('.add-item').click(function(){ $.cookie( 'editID', null); });
+    // 退出
+    $('#exit').click(function(){
+      if(confirm('确定退出吗？')){
+        $.cookie( 'accessToken', null);
+        Common.backLogin();
+      }
+    });
+});
+</script>
+<script src="js/jQuery/laydate.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(2)').addClass('active');
+    // 
+    var type = '';
+    var page = 1;
+    // 切换
+    $('.tab a').click(function(event) {
+        $('.tab a').removeClass('active');
+        $(this).addClass('active');
+        page = 1;
+        type = $(this).attr('data-type');
+        getOrderList();
+    });
+    // 翻页
+    $('.pages').on('click', 'a', function(){
+        page = parseInt($(this).text());
+        getOrderList();
+    });
+    // 获取订单列表
+    var getOrderList = function(){
+        $('.no').hide();
+        $('.tools').show();
+        $('.order-list-container').html('');
+        $().popup({loading: 'true'});
+        $.post(API.getPcOrderList, {
+            token: $.cookie('accessToken'),
+            type: type,
+            page: page,
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(data.list.length <= 0){
+                $('.no').show();
+                $('.tools').hide();
+                return;
+            }
+            // 分页按钮
+            $('.pages').html('');
+            if(page == 1){
+                $('.pages').append('<a class="active">1</a>');
+            }else{
+                $('.pages').append('<a>1</a>');
+            }
+            for(var lp=page-4; lp<=page; lp++){
+                if(lp<=1 || lp>=data.object) continue;
+                if(page == lp){
+                    $('.pages').append('<a class="active">'+lp+'</a>');
+                }else{
+                    $('.pages').append('<a>'+lp+'</a>');
+                }
+            }
+            for(var np=page+1; np<page+5; np++){
+                if(np>=data.object) continue;
+                if(page == np){
+                    $('.pages').append('<a class="active">'+np+'</a>');
+                }else{
+                    $('.pages').append('<a>'+np+'</a>');
+                }
+            }
+            if(data.object != 1){
+                if(page == data.object){
+                    $('.pages').append('<a class="active">'+data.object+'</a>');
+                }else{
+                    $('.pages').append('<a>'+data.object+'</a>');
+                }
+            }
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                // 地址
+                var address = '';
+                if(_data.room_num){
+                    address = _data.room_num + '<br>' + '在店消费';
+                }else if(_data.order_room_num){
+                    address = _data.order_room_num + '<br>' + '技师上门';
+                }
+                // _data.order_address == 0 ? address = '在店消费' : address = '技师上门';
+                // 状态
+                var statusText = '';
+                var cao = ''
+                if(_data.order_status == 1){
+                    if(_data.order_pay == 0){
+                        statusText = '<span class="status active">待支付</span><br><a class="btn btn-show btn-little pay">付款</a>';
+                    }else{
+                        statusText = '<span class="status do">已完成</span>';
+                    }
+                    cao = '<a class="open">查看详情</a>';
+                }
+                if(_data.order_status == 2){
+                    statusText = '<span class="status cancel">已取消</span>';
+                    cao = '<a class="open">查看详情</a><br><a class="del">删除</a>';
+                }
+                if(_data.order_status == 3){
+                    statusText = '<span class="status wait">等待上钟</span><br><a class="btn btn-default btn-little up-work">上钟</a>';
+                    cao = '<a class="open">查看详情</a><br><a class="cancel">取消订单</a>';
+                }
+                if(_data.order_status == 4){
+                    statusText = '<span class="status active">上钟</span><br><a class="btn btn-default btn-little down-work">下钟</a>';
+                    if(_data.order_addtime == 1) statusText+= '<a class="btn btn-default btn-little add-work">加钟</a>';
+                    cao = '<a class="open">查看详情</a>';
+                }
+                if(_data.order_status == 5){
+                    statusText = '<span class="status cancel">已删除</span>';
+                    cao = '<a class="open">查看详情</a>';
+                }
+                if(_data.order_status == 6){
+                    statusText = '<span class="status active">待确认</span>';
+                    cao = '<a class="open">查看详情</a>';
+                }
+                $('.order-list-container').append('\
+                    <table class="item">\
+                        <tr data-id="'+_data.order_id+'">\
+                            <td width="20%" style="text-align: left;">订单号：'+_data.order_num+'<br>交易时间：'+new Date(_data.order_createtime*1000).format('yyyy-MM-dd hh:mm:ss')+'</td>\
+                            <td width="25%" style="text-align: left;">\
+                                <img src="'+HOST+_data.item_image+'" alt="" class="head">'+_data.item_name+'\
+                            </td>\
+                            <td width="10%">'+_data.massagist_no+'<br>'+_data.massagist_name+'</td>\
+                            <td width="10%">￥'+_data.order_totalprice+'</td>\
+                            <td width="10%">'+address+'</td>\
+                            <td width="15%">'+statusText+'</td>\
+                            <td width="10%">'+cao+'</td>\
+                        </tr>\
+                    </table>'
+                );
+            };
+        });
+    }
+    getOrderList();
+
+    // 查看订单详情
+    $('.order-list-container').on('click', 'a.open', function(){
+        $.cookie('order_info_id', $(this).parent().parent().attr('data-id'));
+        window.location.href = "order-info.html";
+    });
+
+    // 上钟操作
+     $('.order-list-container').on('click', 'a.up-work, a.down-work, a.add-work', function(){
+        var action = '';
+        if( $(this).attr('class').indexOf('up-work')>=0 ) action = 'start';
+        if( $(this).attr('class').indexOf('down-work')>=0 ) action = 'end';
+        if( $(this).attr('class').indexOf('add-work')>=0 ) action = 'add';
+        if(confirm('确定操作吗？')){
+            var id = $(this).parent().parent().attr('data-id');
+            $.post(API.pcUpdateOrderStae, {
+                token: $.cookie('accessToken'),
+                id: id,
+                action: action
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                getOrderList();
+            });
+        }
+    });
+
+     // 取消
+    $('.order-list-container').on('click', '.cancel', function(){
+        if(confirm('确认取消吗？')){
+            var id = $(this).parent().parent().attr('data-id');
+            $.post(API.updateOrderStatus, {
+                token: $.cookie('accessToken'),
+                id: id,
+                action: 'cancel',
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                getOrderList();
+            });
+        }
+    });
+    // 删除
+    $('.order-list-container').on('click', '.del', function(){
+        if(confirm('确认删除吗？')){
+            var id = $(this).parent().parent().attr('data-id');
+            $.post(API.updateOrderStatus, {
+                token: $.cookie('accessToken'),
+                id: id,
+                action: 'delete',
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                window.location.href = "order-list.html";
+            });
+        }
+    });
+
+    // 导出
+    $('.export').popup({container: '.update-pwd'});
+    $('#upsbumit').click(function(){
+        if( new Date($("#end").val()) >= new Date($("#start").val()) ){
+            window.open(API.getOrderExcel + '?token=' + $.cookie('accessToken') + '&start=' + $("#start").val() + '&end=' + $("#end").val() );
+        }else{
+            alert('结束日期必须大于开始日期哦！');
+        }
+    })
+})
+</script>
+</body>
+</html>

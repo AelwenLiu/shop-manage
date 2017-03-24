@@ -1,0 +1,168 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+    <div class="order-menu">
+        <a href="order-choose-project.html">选项目</a>
+        <a href="order-choose-tech.html">选技师</a>
+        <a href="order-choose-room.html">选房间</a>
+    </div>
+    <div class="selectd">已选类目：<span></span></div>
+
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>头像</th>
+                <th>工号</th>
+                <th>昵称</th>
+                <th>年龄</th>
+                <th>籍贯</th>
+                <th>状态</th>
+                <th>计时</th>
+                <th class="text-center" width="100">调整顺序</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何技师哦</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(3)').addClass('active');
+    // 
+    var getProjects = function(){
+        var _data = {
+            token: $.cookie('accessToken'),
+            state: ''
+        };
+        if($.cookie('order_project')) _data.pid = JSON.parse( $.cookie('order_project') ).id;
+        $.post(API.getMassagistList, _data, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                return;
+            }
+            $('tbody').html('');
+            var showTImeFlag = 0;
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                var chooseText = '';
+                if($.cookie('order_tech') && JSON.parse( $.cookie('order_tech') ).id == _data.massagist_id){
+                    chooseText = '<a class="choose active">选择</a>';
+                }else{
+                    chooseText = '<a class="choose">选择</a>';
+                }
+                // 状态
+                var status = '';
+                if(_data.massagist_status == 2){
+                    status = '排钟';
+                }
+                if(_data.massagist_status == 3){
+                    status = '休息';
+                }
+                if(_data.massagist_status == 1){
+                    status = '上钟';
+                }
+                if(_data.massagist_status != 2){
+                    chooseText = '<a class="choose-hide">选择</a>';
+                }
+                // 格式化头像
+                if(_data.massagist_photo.indexOf('http')<0) _data.massagist_photo = HOST + _data.massagist_photo;
+                showTImeFlag++;
+                $('tbody').append('\
+                    <tr data-id="'+_data.massagist_id+'" data-statu="'+_data.massagist_status+'">\
+                        <td class="head"><img src="'+_data.massagist_photo+'" alt=""></td>\
+                        <td class="center td-no">'+_data.massagist_no+'</td>\
+                        <td class="center td-nick">'+_data.massagist_name+'</td>\
+                        <td class="center">'+_data.massagist_birth+'</td>\
+                        <td class="center">'+_data.massagist_native+'</td>\
+                        <td class="center">'+status+'</td>\
+                        <td class="center showtime'+showTImeFlag+'"></td>\
+                        <td class="text-center iconfont">\
+                            <i class="up">&#xe600;</i>\
+                            <i class="down">&#xe7cb;</i>\
+                            <i class="upd">&#xe601;</i>\
+                            <i class="downd">&#xe7ca;</i>\
+                        </td>\
+                        <td class="text-right">'+ chooseText +'</td>\
+                    </tr>');
+                if(_data.order_item_starttime){
+                    if( (_data.order_item_starttime).toString().length == 10 ){
+                        var miao = _data.order_item_starttime - Date.parse(new Date())/1000;
+                        showTime(miao, 1, 'showtime'+showTImeFlag);
+                    }else {
+                        showTime(_data.order_item_starttime, 2, 'showtime'+showTImeFlag);
+                    }
+                }
+            }
+        });
+    }
+    getProjects();
+    // 排序
+    $('tbody').on('click', 'i', function(){
+        $().popup({loading: 'true'});
+        var id = $(this).parent().parent().attr('data-id');
+        var type = 'technician';
+        var action = '';
+        if($(this).attr('class') == 'up') action = 'prev';
+        if($(this).attr('class') == 'down') action = 'next';
+        if($(this).attr('class') == 'upd') action = 'first';
+        if($(this).attr('class') == 'downd') action = 'last';
+        $.post(API.sortObject, {
+            token: $.cookie('accessToken'),
+            type: type,
+            action: action,
+            pid: id,
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            getProjects();
+        });
+    });
+    // 选择
+    $('tbody').on('click', '.choose', function(){
+        if($(this).attr('class').indexOf('active') >= 0){
+            $(this).removeClass('active');
+            $.cookie('order_tech', null);
+        }else{
+            var id = $(this).parent().parent().attr('data-id');
+            var no = $(this).parent().parent().find('.td-no').text();
+            var nick = $(this).parent().parent().find('.td-nick').text();
+            var head = $(this).parent().parent().find('.head img').attr('src');
+
+            $('tbody').find('.choose').removeClass('active');
+            $(this).addClass('active');
+            var json = {
+                id: id,
+                no: no,
+                nick: nick,
+                head: head
+            };
+            $.cookie('order_tech', JSON.stringify(json));
+        }
+        getCookie();
+    });
+    getCookie();
+
+    var showTime = function(val, add, el){
+        let h = Math.floor(val / 60 / 60);
+        let m = Math.floor((val - h * 60 * 60) / 60);
+        let s = Math.floor((val - h * 60 * 60 - m * 60));
+        var jishi = h + ':' + m + ':' + s;
+        $('.'+el+'').text(jishi);
+        if(add == 1) val--;
+        else if(add == 2) val++;
+        if (val < 0){
+            jishi = '00:00:00';
+            $('.'+el+'').text(jishi);
+        }else{
+            setTimeout(function(){ showTime(val, add, el); }, 1000);
+        }
+    }
+});
+</script>
+</body>
+</html>

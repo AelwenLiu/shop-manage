@@ -1,0 +1,305 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">添加技师</div>
+        <div class="section">
+            <table class="table-default">
+                <tr>
+                    <td width="100">工号</td>
+                    <td><input id="techNo" type="text" class="input-small" name=""></td>
+                </tr>
+                <tr>
+                    <td width="100">昵称</td>
+                    <td><input id="techNick" type="text" class="input-small" name=""></td>
+                </tr>
+                <tr>
+                    <td width="100">出生年月</td>
+                    <td><input id="datetimepicker" type="text" class="input-small laydate-icon" onclick="laydate({max: laydate.now()})"></td>
+                </tr>
+                <tr>
+                    <td width="100">籍贯</td>
+                    <td><select id="techNative" class="input-small"></select></td>
+                </tr>
+                <tr>
+                    <td width="100">性别</td>
+                    <td><input type="radio" name="sex" value="1"> 男&nbsp;&nbsp;&nbsp;<input type="radio" name="sex" value="2"> 女</td>
+                </tr>
+                
+            </table>
+        </div>
+        <div class="section">
+            <h1>头像</h1>
+            <img src="img/up-head.jpg" class="update-logo-btn">
+            <input type="file" accept="image/gif,image/jpeg,image/jpg,image/png" id="fileCrop">
+            <div id="logoDate" class="hide"><a class="del-img" id="delLogo">删除</a></div>
+        </div>
+        <div class="section">
+            <h1>技师封面<span>(最多上传3张)</span></h1>
+            <ul id="bannersWrap">
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <li class="update-img">
+                    <img src="img/up-load.jpg" class="file-add">
+                    <a class="del-img delBanner">删除</a>
+                </li>
+                <div class="clear"></div>
+            </ul>
+        </div>
+        <div class="section">
+            <h1>可选项目</h1>
+            <ul class="project-select">
+                <li><label><input type="checkbox" id="allProject"> 全选</label></li>
+                <div id="proje" class="clear"></div>
+                <div class="clear"></div>
+            </ul>
+        </div>
+        
+        <button class="btn btn-show" id="submit">发布</button>
+        <button class="btn btn-hide">发布中...</button>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="dialog bigger crop-wrap">
+    <div class="title">编辑图片<a class="close">&times;</a></div>
+    <div class="container">
+        <div id="wrap"></div>
+        <div style="margin-top: 10px;">
+            <button class="btn btn-default btn-small close">取消</button>
+            <button id="saveImg" class="btn btn-show btn-small">确定</button>
+            <button class="btn btn-hide btn-small">上传中...</button>
+        </div>
+    </div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script src="js/jQuery/laydate.js"></script>
+<script type="text/javascript" src="js/jQuery/cropper.js"></script>
+<script type="text/javascript" src="js/exif.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(1)').find('dd:eq(1)').addClass('active');
+
+    // 获取省份
+    var getProvincesFn = function(val){
+        $.post(API.getProvinces, {
+            token: $.cookie('accessToken'),
+            type: 'province'
+        }, function(data){
+            for(var i=0; i<data.list.length; i++){
+                if(val && val == data.list[i].value) $('#techNative').append('<option value="'+data.list[i].value+'" selected>'+data.list[i].text+'</option>');
+                else $('#techNative').append('<option value="'+data.list[i].value+'">'+data.list[i].text+'</option>');
+            }
+        });
+    } 
+    // 获取可选项目
+    var getAllProjectFn = function(arr){
+        $.post(API.getAllProject, {
+            token: $.cookie('accessToken')
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(data.list.length <=0 ) return;
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                if(_data.item_status == 1){
+                    if(arr && arr.indexOf(_data.item_id) >= 0) $('#proje').after('<li><label><input type="checkbox" value="'+ _data.item_id +'" name="project" checked> '+_data.item_name+'</label></li>');
+                    else $('#proje').after('<li><label><input type="checkbox" value="'+ _data.item_id +'" name="project"> '+_data.item_name+'</label></li>');
+                }
+            }
+        });
+    }
+    // 获取是否修改
+    if($.cookie('editID')){
+        $('#varTitle').text('修改技师');
+        $.post(API.getObejctInfo, {
+            token: $.cookie('accessToken'),
+            type: 'technician',
+            pid: $.cookie('editID')
+        }, function(data){
+            if(data.errorInfo){history.go(-1);return;}
+            $('#techNo').val(data.object.massagist_no);
+            $('#techNick').val(data.object.massagist_name);
+            $('#datetimepicker').val( new Date(data.object.massagist_birth*1000).format('yyyy-MM-dd') );
+
+            logo = data.object.massagist_photo;
+            showLogo(true);
+
+            if(data.object.massagist_image && data.object.massagist_image.length > 0){
+                banners = [];
+                for(var i=0; i<data.object.massagist_image.length; i++){
+                    banners.push(data.object.massagist_image[i].img_url);
+                }
+                showBanners();
+            }
+
+            $("input[name='sex']").eq(data.object.massagist_sex-1).attr("checked","checked");
+
+            // 省份
+            getProvincesFn(data.object.massagist_native);
+            getAllProjectFn(data.object.massagist_p_id);
+        });
+    }else{
+        getProvincesFn();
+        getAllProjectFn();
+    }
+    // logo
+    var logo = null;
+    var banners = [];
+    var activeType = 1; //1：上传logo; 2：上传banner
+    // 显示logo
+    var showLogo = function(type){
+        if(type){
+            $('.update-logo-btn').hide();
+            $('#logoDate').show().css('backgroundImage', 'url('+HOST + logo+')');
+            $('#logoDate .del-img').show();
+            showWebLogo();
+        }else{
+            $('#logoDate').hide();
+            logo = null;
+            $('.update-logo-btn').show();
+            showWebLogo();
+        }
+    }
+    // 显示banner
+    var showBanners = function(){
+        for(var i=0; i<5; i++){
+            if(banners[i]){
+                $('#bannersWrap li:eq(' + i + ')').find('img').attr('src', HOST + banners[i]).removeClass('file-add');
+                $('#bannersWrap li:eq(' + i + ')').find('a').show();
+            }else{
+                $('#bannersWrap li:eq(' + i + ')').find('img').attr('src', 'img/up-load.jpg').addClass('file-add');
+                $('#bannersWrap li:eq(' + i + ')').find('a').hide();
+            }
+        }
+    }    
+    // 选择banner图片
+    $(document).on('click', '.file-add', function(){
+        activeType = 2;
+        $('#fileCrop').click();
+    });
+    // 选择logo图片
+    $('.update-logo-btn').click(function(){
+        activeType = 1;
+        $('#fileCrop').click();
+    });
+    // 选择图片
+    $('#fileCrop').change(function(){
+        $('#wrap').html('<img class="cropper">')
+        var file = document.getElementById('fileCrop').files[0];
+        $().popup({container: '.crop-wrap'});
+        EXIF.getData(file, function(){
+            var obj = Object.assign({}, EXIF.getAllTags(this))
+            orientation = obj.Orientation
+        });
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            Common.getImgData(e.target.result, orientation, function(data){
+                var pic = new Image()
+                pic.src = data
+                pic.onload= function() {
+                    $('.cropper').attr('src', data);
+                    setTimeout(function(){
+                        if(activeType == 1) $(".cropper").cropper({aspectRatio: 1 / 1});
+                        if(activeType == 2) $(".cropper").cropper({aspectRatio: 1 / 0.466});
+                    }, 100);
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+    // 裁剪
+    $('#saveImg').click(function(){
+        $(this).hide().next('.btn-hide').show();
+        var dataURL = $(".cropper").cropper("getDataURL");
+        var picURL = dataURL.replace(/^.*?,/, '');
+        $.post(API.uploadImage, {
+            token: $.cookie('accessToken'),
+            base64: picURL
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            if(activeType == 1){
+                logo = data.list;
+                showLogo(true);
+            }
+            if(activeType == 2){
+                banners.push(data.list);
+                showBanners();
+            }
+            $('#saveImg').show();
+            $('.btn-hide').hide();
+            $().popup({container: '.crop-wrap', close: true});
+        });
+    });
+    // 删除logo
+    $('#delLogo').click(function(event) { showLogo(false); });
+    // 删除banners
+    $('.delBanner').click(function(event) {
+        var self = $(this).prev('img');
+        banners.remove( self.attr('src').split(HOST)[1] );
+        showBanners();
+    });
+    // 全选
+    $('#allProject').change(function(){
+        if($(this).attr('checked')){
+            $('.project-select').find('input').attr('checked', true);
+        }else{
+            $('.project-select').find('input').attr('checked', false);
+        }
+    });
+    
+
+    // 发布
+    $('#submit').click(function(){
+        if(banners.length <= 0 || !logo){
+            alert('请上传图片');
+            return;
+        }
+        var techNo = $.trim( $('#techNo').val() );
+        var techNick = $.trim( $('#techNick').val() );
+        var techNative = $.trim( $('#techNative').val() );
+        var datetimepicker = $.trim( $('#datetimepicker').val() );
+        var sex = $.trim($( 'input[name="sex"]:checked' ).val() );
+        var p_id = [];
+        $('input[name="project"]:checked').each(function(){ 
+            p_id.push($(this).val()); 
+        }); 
+        if(!techNo || !techNick || !techNative || !datetimepicker || !sex){
+            alert('内容不能为空');
+            return;
+        }
+        $('#submit').hide().next('.btn-hide').show();
+        var _data = {
+            token: $.cookie('accessToken'),
+            type: 'technician',
+            name: techNick,
+            no: techNo,
+            photo: logo,
+            native: techNative,
+            sex: sex,
+            birth: datetimepicker,
+            cover: banners,
+            p_id: p_id
+        };
+        if($.cookie('editID')) _data.id = $.cookie('editID');
+        $.post(API.updateObjectInfo, _data, function(data){
+            $('#submit').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('发布成功');
+            window.location.href = "tech-list.html";
+        });
+    });
+})
+</script>
+</body>
+</html>

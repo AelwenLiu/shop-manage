@@ -1,0 +1,213 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+    <div class="title-info">
+        <a>确认订单信息</a>
+    </div>
+    <div class="title">房间信息</div>
+    <table class="info-table">
+        <thead>
+            <tr>
+                <th width="40%">消费类型</th>
+                <th>房间号</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><label><input type="radio" name="type" value="0" checked> 在店消费</label></td>
+                <td id="roomNo"></td>
+            </tr>
+            <tr>
+                <td><label><input type="radio" name="type" value="1"> 技师上门</label></td>
+                <td>
+                    <span class="room-input" style="display: none;">
+                    <input class="room-no-text" type="text" placeholder="请输入您的房间号">
+                    <!-- <a class="btn btn-show btn-little" style="border-radius: 0px;">确定</a> -->
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="title">技师信息</div>
+    <table class="info-table width left">
+        <tbody>
+            <tr>
+                <td width="100"><img id="techHead" src="" class="haed"></td>
+                <td class="tech-cookies"></td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="title">项目信息</div>
+    <table class="info-table width">
+        <thead>
+            <tr>
+                <th colspan="2">项目名称</th>
+                <th id="vipText"></th>
+                <th>数量</th>
+                <th>小计</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td width="100"><img id="proHead" src="" class="haed"></td>
+                <td id="proName" style="text-align: left;"></td>
+                <td class="vipValue"></td>
+                <td>1</td>
+                <td class="vipValue show-color"></td>
+            </tr>
+            <tr>
+                <td colspan="5" style="text-align: left;">
+                    <label><input type="radio" name="vip" value="0"> 非会员</label>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <label><input type="radio" name="vip" value="1"> 会员</label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- <div class="price-container">
+        <div class="left-p">
+            <a class="btn-add"><i class="iconfont">&#xe61f;</i> 添加其他变动金额</a>
+            <ul class="changeMoney" style="display: none;">
+
+                <li>优惠金额: <input id="preMoney" type="text" class="input-little">元&nbsp;&nbsp;&nbsp;&nbsp;备注: <input id="preText" type="text" class="input-small"><a class="btn btn-show btn-little" style="border-radius: 0px;" id="submitPre">确定</a></li>
+
+                <li>增加金额: <input id="addMoney" type="text" class="input-little">元&nbsp;&nbsp;&nbsp;&nbsp;备注: <input id="addText" type="text" class="input-small"><a class="btn btn-show btn-little" style="border-radius: 0px;" id="submitAdd">确定</a></li>
+
+            </ul>
+        </div>
+        <div class="right-p text-right">
+            <h2>订单总价： <span class="vipValue"></span></h2>
+            <h3>其他优惠： ¥<span class="preMoney">0</span></h3>
+            <h3>其他增加金额： ¥<span class="addMoney">0</span></h3>
+        </div>
+        <div class="clear"></div>
+    </div> -->
+    <div class="position-price">
+        <a class="btn-prev" href="order-choose-project.html">上一步</a>
+        <a class="submit">提交订单</a>
+        <div class="p">应付金额：<span id="payNub"></span></div>
+    </div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(3)').addClass('active');
+    // 价格变动
+    var changePrice = {
+        prePrice: 0,
+        addPrice: 0,
+        preText: '',
+        addText: ''
+    };
+    $('#submitPre').click(function(){
+        changePrice.prePrice = parseFloat( $('#preMoney').val() ).toFixed(1);
+        changePrice.preText = $.trim( $('#preText').val() );
+        if( changePrice.prePrice && changePrice.preText ){
+            $('#preMoney').val(changePrice.prePrice);
+            $('#preText').val(changePrice.preText);
+            $('.preMoney').text(changePrice.prePrice);
+            getOrderInfo();
+        }else alert('输入格式错误');
+    });
+    $('#submitAdd').click(function(){
+        changePrice.addPrice = parseFloat( $('#addMoney').val() ).toFixed(1);
+        changePrice.addText = $.trim( $('#addText').val() );
+        if( changePrice.addPrice && changePrice.addText ){
+            $('#addMoney').val(changePrice.addPrice);
+            $('#addText').val(changePrice.addText);
+            $('.addMoney').text(changePrice.addPrice);
+            getOrderInfo();
+        }else alert('输入格式错误');
+    });
+    // 地址消费切换
+    var address = 0;
+    $('input[name="type"]').change(function() {
+        address = $(this).val();
+        if(address == 1){
+            $('.room-input').show();
+        }else{
+            $('.room-input').hide();
+        }
+    });
+    // 会员价切换
+    $('input[name="vip"]').change(function() {
+        var type = $(this).val();
+        var json = {
+            id: project.id,
+            text: project.text,
+            vip: type,
+            img: project.img,
+            csp: project.csp,
+            cvp: project.cvp
+        };
+        $.cookie('order_project', JSON.stringify(json));
+        getOrderInfo();
+    });
+    // 
+    var room,
+        tech,
+        project
+    var getOrderInfo = function(){
+        room = JSON.parse($.cookie('order_room'));
+        tech = JSON.parse($.cookie('order_tech'));
+        project = JSON.parse($.cookie('order_project'));
+        // 
+        $('#roomNo').text(room.no);
+        $('#proName').text(project.text);
+        $('#proHead').attr('src', project.img);
+        $('#techHead').attr('src', tech.head);
+        $('.tech-cookies').html('工号：' + tech.no + '&nbsp;&nbsp;&nbsp;&nbsp;昵称：' + tech.nick);
+        if(project.vip == 0){
+            $('#vipText').text('非会员价');
+            $('.vipValue').text('￥'+project.csp);
+            $('input[name="vip"]:eq(0)').attr('checked', true);
+        }else{
+            $('#vipText').text('会员价');
+            $('.vipValue').text('￥'+project.cvp);
+            $('input[name="vip"]:eq(1)').attr('checked', true);
+        }
+        $('#payNub').text('￥'+($('.vipValue').text().split('￥')[1]-changePrice.prePrice) );
+        var _ =(parseFloat($('#payNub').text().split('￥')[1])+parseFloat(changePrice.addPrice));
+        $('#payNub').text('￥'+ _);
+    };
+    $('.btn-add').click(function() {
+        $(this).next().toggle(200);
+    });
+    // 提交订单
+    $('.submit').click(function(){
+        var _room;
+        (address == 0) ? _room = (room.id) : _room = ($('.room-no-text').val());
+        $().popup({loading: 'true'});
+        $.post(API.pcSubmitOrder, {
+            token: $.cookie('accessToken'),
+            massagist: tech.id,
+            room: _room,
+            totalprice: $('#payNub').text().split('￥')[1],
+            address: address,
+            projectId: project.id,
+            increase: $('#addText').val(),
+            reduce: $('#preText').val(),
+            discount_price: changePrice.prePrice,
+            add_price: changePrice.addPrice
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            $.cookie('order_room', null);
+            $.cookie('order_tech', null);
+            $.cookie('order_project', null);
+            window.location.href = "order-list.html";
+        });
+    });
+    // 读
+    if(!$.cookie('order_room') || !$.cookie('order_tech') || !$.cookie('order_project')){
+        window.location.href = "order-choose-project.html";
+    }else{
+        getOrderInfo();
+    }
+})
+</script>
+</body>
+</html>

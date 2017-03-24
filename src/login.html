@@ -1,0 +1,165 @@
+<!--include "../include/head.html"-->
+<body>
+<div class="login">
+    <div class="header"><img src="img/logo.gif" alt=""></div>
+    <div class="banner">
+        <div class="login-container">
+            <h2>账户登录</h2>
+            <div class="input"><i class="iconfont">&#xe60e;</i><input class="root" type="text" name="" placeholder="请输入店铺账号"></div>
+            <div class="input"><i class="iconfont">&#xe602;</i><input class="pwd" type="password" name="" placeholder="请输入密码"></div>
+            <div id="code"></div>
+            <div class="code-success">通过验证！</div>
+            <div class="code-fail">验证失败！</div>
+            <button class="submit">登 录</button>
+            <button class="submit-ing">登录中...</button>
+            <a class="forget">修改密码</a>
+        </div>
+    </div>
+    <div class="login-foot">&copy; 2016强适信息科技（上海）有限公司</div>
+    <div class="dialog big update-pwd">
+        <div class="title">修改密码<a class="close">&times;</a></div>
+        <div class="container">
+            <table class="table-default">
+                <tr>
+                    <td align="right">用户名：</td>
+                    <td><input id="upName" type="text" class="input-default" name=""></td>
+                </tr>
+                <tr>
+                    <td align="right">老密码：</td>
+                    <td><input id="upOldPw" type="password" class="input-default" name=""></td>
+                </tr>
+                <tr>
+                    <td align="right">新密码：</td>
+                    <td><input id="upNewPw" type="password" class="input-default" name=""></td>
+                </tr>
+                <tr>
+                    <td align="right">重复新密码：</td>
+                    <td><input id="upRePw" type="password" class="input-default" name=""></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td align="left">
+                        <button class="btn btn-default btn-small close">取消</button>
+                        <button class="btn btn-show btn-small" id="upsbumit">确定</button>
+                        <button class="btn btn-hide btn-small">修改中...</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="dialog big reg">
+        <div class="title">请先登记店铺信息<a class="close">&times;</a></div>
+        <div class="container">
+            <table class="table-default">
+                <tr>
+                    <td align="right">店铺名称&nbsp;&nbsp;</td>
+                    <td><input type="text" class="input-default shop-name"></td>
+                </tr>
+                <tr>
+                    <td align="right">店铺地址&nbsp;&nbsp;</td>
+                    <td><input type="text" class="input-default shop-address"></td>
+                </tr>
+                <tr>
+                    <td align="right">店铺电话&nbsp;&nbsp;</td>
+                    <td><input type="text" class="input-default shop-tel"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td align="left">
+                        <button class="btn btn-default btn-small close">取消</button>
+                        <button class="btn btn-show btn-small submit-info">提交</button>
+                        <button class="btn btn-hide btn-small">提交中...</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<!--include "../include/script.html"-->
+<script src="http://c.dun.163yun.com/js/c.js"></script>
+<script type="text/javascript">
+var isCode = false;
+new NECaptcha({
+    "element": "code",
+    "captchaId": "ad8a03522721437183837fdc2becc165",
+    "width": 240,
+    "verifyCallback": function(ret){ 
+        isCode = ret['value'];
+        $('.code-success, .code-fail').hide();
+        isCode ? $('.code-success').fadeIn() : $('.code-fail').fadeIn();
+    }
+});
+$(function(){
+    $('.forget').popup({ container: '.update-pwd' });
+    // 提交登录
+    $('.submit').click(function(){
+        if( $('.root').val().length <= 0 || $('.pwd').val().length <= 0 ){
+            alert('店铺账号和密码必须填写！');
+            return;
+        }
+        if(!isCode){
+            alert('验证码验证失败！');
+            return;
+        }
+        $('.submit-ing').show();
+        $('.submit').hide();
+        $.post(API.login, {
+            root: $('.root').val(),
+            pwd: $('.pwd').val()
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            $.cookie('accessToken', data.object, { expires: 7, path: '/' });
+            if(data.list){
+                // 未登记
+                $().popup({container: '.reg'});
+                return;
+            }
+            window.location.href = "shop.html";
+        });
+    });
+    // 提交登记信息
+    $('.submit-info').click(function(){
+        if( $('.shop-name').val().length <= 0 || $('.shop-address').val().length <= 0 || $('.shop-tel').val().length <= 0 ){
+            alert('信息不能为空！');
+            return;
+        }
+        $('.btn-hide').show();
+        $(this).hide();
+        $.post(API.addStoreInfo, {
+            token: $.cookie('accessToken'),
+            name: $('.shop-name').val(),
+            address: $('.shop-address').val(),
+            tel: $('.shop-tel').val(),
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            window.location.href = "shop.html";
+        });
+    });
+    // 修改密码
+    $('#upsbumit').click(function(){
+        if( ($('#upNewPw').val() != $('#upRePw').val()) || !$('#upNewPw').val() ){
+            alert('两次密码不一致！');
+            return;
+        }
+        if(!$('#upName').val() || !$('#upOldPw').val()){
+            alert('用户名密码必须填写！');
+            return;
+        }
+        $('#upsbumit').hide().next('.btn-hide').show();
+        $.post(API.updateShopPwd, {
+            root: $('#upName').val(),
+            pwd: $('#upOldPw').val(),
+            npwd: $('#upNewPw').val(),
+        }, function(data){
+            $('#upsbumit').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('修改成功！');
+            location.reload();
+        });
+    })
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telphone=no, email=no"/>
+    <title>养生汇系统</title>
+    <link rel="stylesheet" href="./css/base.css?v=0.0.1">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.1">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.1">
+</head>
+<body>
+<div class="menu-container">
+    <div class="main">
+        <div class="logo">店铺LOGO</div>
+        <div class="shop-info"><span id="shopTopName"></span> <a id="exit">退出</a></div>
+        <a class="menu" href="#"><img src="img/ico-vip.png"></a>
+        <a class="menu" href="shop.html"><img src="img/ico-submit.png"></a>
+        <a class="menu" href="order-list.html"><img src="img/ico-order.png"></a>
+        <a class="menu" href="order-choose-project.html"><img src="img/ico-shop.png"></a>
+    </div>
+</div>
+<div class="main-container">
+    <div class="c-left">
+        <dl>
+    <dt><i></i>店铺</dt>
+    <dd><a href="shop.html">店铺信息</a></dd>
+    <dd><a href="shop-edit.html">编辑信息</a></dd>
+    <dd><a href="shop-comment.html">店铺评价</a></dd>
+</dl>
+<dl>
+    <dt><i></i>技师</dt>
+    <dd><a href="tech-list.html">技师列表</a></dd>
+    <dd><a href="tech-add.html" class="add-item">添加技师</a></dd>
+</dl>
+<dl>
+    <dt><i></i>项目</dt>
+    <dd><a href="pro-list.html">项目列表</a></dd>
+    <dd><a href="pro-add.html" class="add-item">发布项目</a></dd>
+</dl>
+<dl>
+    <dt><i></i>房间</dt>
+    <dd><a href="room-list.html">房间列表</a></dd>
+    <dd><a href="room-add.html" class="add-item">发布房间</a></dd>
+</dl>
+    </div>
+    <div class="c-right">
+        <div class="title">房间列表</div>
+        <table class="pro-table">
+            <thead>
+                <th class="center">楼层</th>
+                <th class="center">房间号</th>
+                <th class="center">功能</th>
+                <th class="center">人数</th>
+                <th class="center">上架</th>
+                <th class="center">下架</th>
+                <th class="center">操作</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何房间哦</div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="main-footer">&copy; 2017强适信息科技（上海）有限公司</div>
+<script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/jquery.popup.js"></script>
+<script type="text/javascript" src="./js/api.js"></script>
+<script type="text/javascript">
+var Common = {
+    backLogin: function(){window.location.href = "login.html";},
+    getImgData: function(img, dir, next) {
+        let image = new Image();
+        image.onload = function(){
+            let degree = 0,drawWidth,drawHeight,width,height;
+            drawWidth = this.naturalWidth;
+            drawHeight = this.naturalHeight;
+            if(drawWidth > 2000 || drawHeight > 2000){
+                drawWidth = drawWidth / 3;
+                drawHeight = drawHeight / 3;
+            }
+            let canvas = document.createElement('canvas');
+            canvas.width = width = drawWidth;
+            canvas.height = height = drawHeight; 
+            let context = canvas.getContext('2d');
+            let isRouter = true;
+            //判断图片方向，重置canvas大小，确定旋转角度，iphone默认的是home键在右方的横屏拍摄方式
+            switch(dir){
+                //iphone横屏拍摄，此时home键在左侧
+                case 3:
+                    degree = 180;
+                    drawWidth = -width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在下方(正常拿手机的方向)
+                case 6:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 90;
+                    drawWidth = width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在上方
+                case 8:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 270;
+                    drawWidth = -width;
+                    drawHeight = height;
+                    break;
+            }
+            //使用canvas旋转校正
+            context.rotate(degree * Math.PI / 180);
+            context.drawImage(this, 0 , 0, drawWidth, drawHeight);
+            next(canvas.toDataURL(0.7));
+        }
+        image.src = img;
+    },
+    storeLabel: [ '环境优雅', '设备完善', '价格合理', '下次还来', '环境一般', '设施一般', '性价比低', '有待提高', '环境恶劣', '设施陈旧', '价格坑爹', '绝不再来'
+    ],
+    tecLabel: [ '服务热情', '手法专业', '态度很好', '颜值爆表', '服务一般', '手法一般', '态度一般', '看的过去', '服务太差', '手法太差', '态度恶劣', '惨不忍睹'
+    ]
+};
+Array.prototype.remove = function(val) {
+  var index = this.indexOf(val);
+  if (index > -1) {
+    this.splice(index, 1);
+  }
+};
+Date.prototype.format = function(format) {
+   var date = {
+          "M+": this.getMonth() + 1,
+          "d+": this.getDate(),
+          "h+": this.getHours(),
+          "m+": this.getMinutes(),
+          "s+": this.getSeconds(),
+          "q+": Math.floor((this.getMonth() + 3) / 3),
+          "S+": this.getMilliseconds()
+   };
+   if (/(y+)/i.test(format)) {
+          format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+   }
+   for (var k in date) {
+          if (new RegExp("(" + k + ")").test(format)) {
+                 format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                        ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+          }
+   }
+   return format;
+}
+var showWebLogo = function(){
+    if($.cookie('logo')){
+        $('.logo').html('<img src="'+ $.cookie('logo') +'">');
+    }
+    if($.cookie('webName')){
+        $('#shopTopName').text($.cookie('webName'));
+    }
+}
+var getCookie = function(){
+    $('.selectd span').html('');
+    $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_project')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_tech')){
+        $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
+    if($.cookie('order_room')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
+        $('.order-menu').find('a:eq(2)').addClass('active');
+    }
+};
+$(function(){
+    if (!!window.ActiveXObject || "ActiveXObject" in window)  {
+        $('body').before('<div class="chrome">您的浏览器版本过低，部分功能无法使用，请下载chrome谷歌浏览器！<a href="http://rj.baidu.com/soft/detail/14744.html" target="_blank">去下载</a></div>')
+    };
+    showWebLogo();
+    // 删除cookies
+    $('.add-item').click(function(){ $.cookie( 'editID', null); });
+    // 退出
+    $('#exit').click(function(){
+      if(confirm('确定退出吗？')){
+        $.cookie( 'accessToken', null);
+        Common.backLogin();
+      }
+    });
+});
+</script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(3)').find('dd:eq(0)').addClass('active');
+    // 
+    var getRooms = function(){
+        $.post(API.getRoomList, {
+            token: $.cookie('accessToken')
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                $('.pro-table').hide();
+                return;
+            }
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                // 状态
+                var lowerHTML = '';
+                var topHTML = '';
+                if( _data.room_now_num == 0 && _data.room_status == 2){
+
+                    topHTML = '<input type="radio" class="top" checked>';
+                    lowerHTML = '<input type="radio" class="lower">';
+                }
+                if( _data.room_now_num == 0 && _data.room_status == 3){
+                    topHTML = '<input type="radio" class="top">';
+                    lowerHTML = '<input type="radio" class="lower" checked>';
+                }
+                $('tbody').append('\
+                    <tr data-id="'+_data.room_id+'" data-statu="'+_data.room_status+'">\
+                        <td class="center">'+_data.room_floor+'</td>\
+                        <td class="center">'+_data.room_num+'</td>\
+                        <td class="center">'+_data.room_func+'</td>\
+                        <td class="center">'+_data.room_size+'</td>\
+                        <td class="center">'+topHTML+'</td>\
+                        <td class="center">'+lowerHTML+'</td>\
+                        <td class="center"><a href="javascript:;" class="edit">修改</a></td>\
+                    </tr>');
+            }
+        });
+    }
+    getRooms();
+    // 上下架
+    $('tbody').on('click', 'input', function(){
+        if($(this).parent().parent('tr').attr('data-statu') == 1 && $(this).hasClass('top')) return;
+        if($(this).parent().parent('tr').attr('data-statu') == 5 && $(this).hasClass('lower')) return;
+        var type = 'room';
+            pid = $(this).parent().parent('tr').attr('data-id');
+            action = $(this).attr('class');
+        $().popup({loading: 'true'});
+        $.post(API.updateState, {
+            token: $.cookie('accessToken'),
+            type: type,
+            pid: pid,
+            action: action
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            action=='top' ? alert('房间上架成功') : alert('房间下架成功');
+            location.reload();
+        });
+    });
+    // 修改
+    $('tbody').on('click', '.edit', function(){
+        $.cookie( 'editID', $(this).parent().parent('tr').attr('data-id') );
+        window.location.href = "room-add.html";
+    });
+})
+</script>
+</body>
+</html>

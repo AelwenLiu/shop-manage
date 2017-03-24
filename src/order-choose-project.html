@@ -1,0 +1,132 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+    <div class="order-menu">
+        <a href="order-choose-project.html">选项目</a>
+        <a href="order-choose-tech.html">选技师</a>
+        <a href="order-choose-room.html">选房间</a>
+    </div>
+    <div class="selectd">已选类目：<span></span></div>
+
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th colspan="2">项目</th>
+                <th class="csp active" width="100"><input type="radio" name="vip" value="0" checked> 非会员价</th>
+                <th class="cvp" width="100"><input type="radio" name="vip" value="1"> 会员价</th>
+                <th class="text-center" width="100">调整顺序</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何项目哦</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(3)').addClass('active');
+    var vip = 0;
+    $('input[name="vip"]').change(function() {
+        vip = $(this).val();
+        if(vip == 0){
+            $('.csp').addClass('active');
+            $('.cvp').removeClass('active');
+        }else{
+            $('.cvp').addClass('active');
+            $('.csp').removeClass('active');
+        }
+    });
+    // 
+    var getProjects = function(){
+        var _data = {
+            token: $.cookie('accessToken'),
+            type: 1
+        };
+        if($.cookie('order_tech')) _data.tid = JSON.parse( $.cookie('order_tech') ).id;
+        $.post(API.getAllProject, _data, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                return;
+            }
+            $('tbody').html('');
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                var chooseText = '';
+                if($.cookie('order_project') && JSON.parse( $.cookie('order_project') ).id == _data.item_id){
+                    chooseText = '<a class="choose active">选择</a>';
+                }else{
+                    chooseText = '<a class="choose">选择</a>';
+                }
+                $('tbody').append('\
+                    <tr data-id="'+_data.item_id+'">\
+                        <td class="head"><img src="'+ HOST + _data.item_image+'"></td>\
+                        <td>\
+                            <h1>'+_data.item_name+'</h1>\
+                            <p>'+_data.item_intro+'</p>\
+                        </td>\
+                        <td class="csp">￥'+_data.item_price+'</td>\
+                        <td class="cvp">￥'+_data.item_vipprice+'</td>\
+                        <td class="text-center iconfont">\
+                            <i class="up">&#xe600;</i>\
+                            <i class="down">&#xe7cb;</i>\
+                            <i class="upd">&#xe601;</i>\
+                            <i class="downd">&#xe7ca;</i>\
+                        </td>\
+                        <td class="text-right">'+ chooseText +'</td>\
+                    </tr>');
+            }
+        });
+    }
+    getProjects();
+    // 排序
+    $('tbody').on('click', 'i', function(){
+        $().popup({loading: 'true'});
+        var id = $(this).parent().parent().attr('data-id');
+        var type = 'project';
+        var action = '';
+        if($(this).attr('class') == 'up') action = 'prev';
+        if($(this).attr('class') == 'down') action = 'next';
+        if($(this).attr('class') == 'upd') action = 'first';
+        if($(this).attr('class') == 'downd') action = 'last';
+        $.post(API.sortObject, {
+            token: $.cookie('accessToken'),
+            type: type,
+            action: action,
+            pid: id,
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            getProjects();
+        });
+    });
+    // 选择
+    $('tbody').on('click', '.choose', function(){
+        if($(this).attr('class').indexOf('active') >= 0){
+            $(this).removeClass('active');
+            $.cookie('order_project', null);
+        }else{
+            var id = $(this).parent().parent().attr('data-id');
+            var text = $(this).parent().parent().find('h1').text();
+            $('tbody').find('.choose').removeClass('active');
+            $(this).addClass('active');
+            var json = {
+                id: id,
+                text: text,
+                vip: vip,
+                img: $(this).parent().parent().find('.head img').attr('src'),
+                csp: $(this).parent().parent().find('.csp').text().split('￥')[1],
+                cvp: $(this).parent().parent().find('.cvp').text().split('￥')[1]
+            };
+            $.cookie('order_project', JSON.stringify(json));
+        }
+        getCookie();
+    });
+    getCookie();
+})
+</script>
+</body>
+</html>

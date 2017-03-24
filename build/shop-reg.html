@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telphone=no, email=no"/>
+    <title>养生汇系统</title>
+    <link rel="stylesheet" href="./css/base.css?v=0.0.1">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.1">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.1">
+</head>
+<body>
+<div class="reg">
+    <div class="header-container">
+        <div class="header"><img src="img/logo2.jpg" alt=""></div>
+    </div>
+    <div class="h1-title">主体信息登记</div>
+    <!-- <table class="reg-table">
+        <tr>
+            <td class="left"></td>
+            <td class="midd"></td>
+            <td class="right"></td>
+        </tr>
+    </table> -->
+    <table class="reg-table">
+        <tr>
+            <td class="left">企业名称</td>
+            <td class="midd">
+                <input id="com-name" class="input-default" type="text" name="">
+                <p>需与当地政府颁发的商业许可证书或企业注册证上的企业名称完全一致，信息审核审核成功后，企业名称不可修改。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">营业执照注册号</td>
+            <td class="midd">
+                <input id="com-licence" class="input-default" type="text" name="">
+                <p>请填写工商营业执照上的注册号；或三证合一后18位的统一社会信用代码。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">组织机构代码/统一社会信用代码</td>
+            <td class="midd">
+                <input id="com-institution" class="input-default" type="text" name="">
+                <p>请输入9位组织机构代码，如12345678-9；或三证合一后18位的统一社会信用代码。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">法定代表人/企业负责人姓名</td>
+            <td class="midd">
+                <input id="com-present" class="input-default" type="text" name="">
+                <p>按照营业执照上填写。如属于分公司则填写工商营业执照上明确的负责人，个体工商户请填写经营者姓名，合伙企业请填写合伙人姓名，个人独资企业请填写投资人姓名，企业法人的非法人分支机构填写负责人姓名。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">经营范围(一般经营范围)</td>
+            <td class="midd">
+                <textarea id="com-engagein" class="textarea-default"></textarea>
+                <p>与企业工商营业执照上一致。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">经营范围(前置许可经营范围)</td>
+            <td class="midd">
+                <textarea id="com-exengagein" class="textarea-default"></textarea>
+                <p>没有则填“无”</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+    </table>
+
+    <div class="h1-title">企业对公账户登记<span>（此账号用于微信公众平台的打款验证和支付结算）</span></div>
+    <table class="reg-table">
+        <tr>
+            <td class="left">企业开户名称</td>
+            <td class="midd">
+                <input id="com-nameforbank" class="input-default" type="text" name="">
+                <p>对公账号需跟组织机构代码证上的机构名称保持一致。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">企业开户银行</td>
+            <td class="midd">
+                <input id="com-bankname" class="input-default" type="text" name="">
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">企业对公账号</td>
+            <td class="midd">
+                <input id="com-bankaccount" class="input-default" type="text" name="">
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">再次输入账号</td>
+            <td class="midd">
+                <input id="com-bankaccount-re" class="input-default" type="text" name="">
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">开户地点</td>
+            <td class="midd">
+                <select class="sel-reg" id="bankaddress_p"><option value="-1">请选择</option></select>
+                <select class="sel-reg" id="bankaddress_c"><option value="-1">请选择</option></select>
+            </td>
+            <td class="right"></td>
+        </tr>
+    </table>
+
+    <div class="h1-title">运营者信息登记<span>（运营者可以不必是法人，用于公众号的管理）</span></div>
+
+    <table class="reg-table">
+        <tr>
+            <td class="left">运营者身份证姓名</td>
+            <td class="midd">
+                <input id="com-operatename" class="input-default" type="text" name="">
+                <p>请填写该公众帐号运营者的姓名，如果名字包含分隔号“·”，请 勿省略。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">运营者部门与职位</td>
+            <td class="midd">
+                <input id="com-operatepai" class="input-default" type="text" name="">
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">运营者手机号码</td>
+            <td class="midd">
+                <input id="com-operatephone" class="input-default" type="text" name="">
+                <p>请填写运营者的手机号码。</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">运营者座机</td>
+            <td class="midd">
+                <input id="com-operatetel" class="input-default" type="text" name="">
+                <p>包括区号、电话、分机号，以“-”隔开</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">运营者电子邮箱</td>
+            <td class="midd">
+                <input id="com-operateemail" class="input-default" type="text" name="">
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">运营者身份证号码</td>
+            <td class="midd">
+                <input id="com-operateid" class="input-default" type="text" name="">
+                <p>请输入运营者的身份证号码</p>
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">运营者身份证件（正面）</td>
+            <td class="midd">
+                <p>请提交中华人民共和国居民身份证，无居民身份证的内地居民可提交《临时居民身份证》。格式要求：支持.jpg .jpeg .bmp .gif .png格式图片，大小不超过5M。</p>
+                <button data-id="operateface1" class="btn btn-write margin10">上传</button>
+                <img src="" id="operateface1" class="show-images">
+            </td>
+            <td class="right content">示例<br><img src="./img/id1.jpg"></td>
+        </tr>
+        <tr>
+            <td class="left">运营者身份证件（反面）</td>
+            <td class="midd">
+                <p>请提交中华人民共和国居民身份证，无居民身份证的内地居民可提交《临时居民身份证》。格式要求：支持.jpg .jpeg .bmp .gif .png格式图片，大小不超过5M。</p>
+                <button data-id="operateface2" class="btn btn-write margin10">上传</button>
+                <img src="" id="operateface2" class="show-images">
+            </td>
+            <td class="right content">示例<br><img src="./img/id2.jpg"></td>
+        </tr>
+        <tr>
+            <td class="left">组织机构代码证</td>
+            <td class="midd">
+                <p>组织机构代码证必须在有效期范围内。若办理过三证合一的企业无法提供组织机构代码证，无需上传。格式要求：原件照片、扫描件或者加盖公章的复印件，支持.jpg .jpeg .bmp .gif .png格式图片。大小不超过5M。</p>
+                <button data-id="insitutionface" class="btn btn-write margin10">上传</button>
+                <img src="" id="insitutionface" class="show-images">
+            </td>
+            <td class="right"></td>
+        </tr>
+        <tr>
+            <td class="left">企业工商营业执照</td>
+            <td class="midd">
+                <p>只支持中国大陆工商局或市场监督管理局颁发的工商营业执照，且必须在有效期内。<br>若办理过三证合一的企业，请上传<a>最新的营业执照</a>。<br>格式要求：原件照片、扫描件或者加盖公章的复印件，支持.jpg .jpeg .bmp .gif .png格式图片。大小不超过5M。</p>
+                <button data-id="storeface" class="btn btn-write margin10">上传</button>
+                <img src="" id="storeface" class="show-images">
+            </td>
+            <td class="right"></td>
+        </tr>
+    </table>
+    <div class="h1-title"></div>
+    <table class="reg-table">
+        <tr>
+            <td class="left"></td>
+            <td class="midd">
+                <button id="submit" class="btn btn-show">提交</button>
+                <button class="btn btn-default" onclick="cancel();">取消</button>
+            </td>
+            <td class="right"></td>
+        </tr>
+</div>
+<div class="dialog bigger crop-wrap">
+    <div class="title">编辑图片<a class="close">&times;</a></div>
+    <div class="container">
+        <div id="wrap"></div>
+        <div style="margin-top: 10px;">
+            <button class="btn btn-default btn-small close">取消</button>
+            <button id="saveImg" class="btn btn-show btn-small">确定</button>
+            <button class="btn btn-hide btn-small">上传中...</button>
+        </div>
+    </div>
+</div>
+<input type="file" accept="image/gif,image/jpeg,image/jpg,image/png" id="fileCrop" style="position: absolute;left: -1000px;">
+<script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/jquery.popup.js"></script>
+<script type="text/javascript" src="./js/api.js"></script>
+<script type="text/javascript">
+var Common = {
+    backLogin: function(){window.location.href = "login.html";},
+    getImgData: function(img, dir, next) {
+        let image = new Image();
+        image.onload = function(){
+            let degree = 0,drawWidth,drawHeight,width,height;
+            drawWidth = this.naturalWidth;
+            drawHeight = this.naturalHeight;
+            if(drawWidth > 2000 || drawHeight > 2000){
+                drawWidth = drawWidth / 3;
+                drawHeight = drawHeight / 3;
+            }
+            let canvas = document.createElement('canvas');
+            canvas.width = width = drawWidth;
+            canvas.height = height = drawHeight; 
+            let context = canvas.getContext('2d');
+            let isRouter = true;
+            //判断图片方向，重置canvas大小，确定旋转角度，iphone默认的是home键在右方的横屏拍摄方式
+            switch(dir){
+                //iphone横屏拍摄，此时home键在左侧
+                case 3:
+                    degree = 180;
+                    drawWidth = -width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在下方(正常拿手机的方向)
+                case 6:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 90;
+                    drawWidth = width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在上方
+                case 8:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 270;
+                    drawWidth = -width;
+                    drawHeight = height;
+                    break;
+            }
+            //使用canvas旋转校正
+            context.rotate(degree * Math.PI / 180);
+            context.drawImage(this, 0 , 0, drawWidth, drawHeight);
+            next(canvas.toDataURL(0.7));
+        }
+        image.src = img;
+    },
+    storeLabel: [ '环境优雅', '设备完善', '价格合理', '下次还来', '环境一般', '设施一般', '性价比低', '有待提高', '环境恶劣', '设施陈旧', '价格坑爹', '绝不再来'
+    ],
+    tecLabel: [ '服务热情', '手法专业', '态度很好', '颜值爆表', '服务一般', '手法一般', '态度一般', '看的过去', '服务太差', '手法太差', '态度恶劣', '惨不忍睹'
+    ]
+};
+Array.prototype.remove = function(val) {
+  var index = this.indexOf(val);
+  if (index > -1) {
+    this.splice(index, 1);
+  }
+};
+Date.prototype.format = function(format) {
+   var date = {
+          "M+": this.getMonth() + 1,
+          "d+": this.getDate(),
+          "h+": this.getHours(),
+          "m+": this.getMinutes(),
+          "s+": this.getSeconds(),
+          "q+": Math.floor((this.getMonth() + 3) / 3),
+          "S+": this.getMilliseconds()
+   };
+   if (/(y+)/i.test(format)) {
+          format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+   }
+   for (var k in date) {
+          if (new RegExp("(" + k + ")").test(format)) {
+                 format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                        ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+          }
+   }
+   return format;
+}
+var showWebLogo = function(){
+    if($.cookie('logo')){
+        $('.logo').html('<img src="'+ $.cookie('logo') +'">');
+    }
+    if($.cookie('webName')){
+        $('#shopTopName').text($.cookie('webName'));
+    }
+}
+var getCookie = function(){
+    $('.selectd span').html('');
+    $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_project')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_tech')){
+        $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
+    if($.cookie('order_room')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
+        $('.order-menu').find('a:eq(2)').addClass('active');
+    }
+};
+$(function(){
+    if (!!window.ActiveXObject || "ActiveXObject" in window)  {
+        $('body').before('<div class="chrome">您的浏览器版本过低，部分功能无法使用，请下载chrome谷歌浏览器！<a href="http://rj.baidu.com/soft/detail/14744.html" target="_blank">去下载</a></div>')
+    };
+    showWebLogo();
+    // 删除cookies
+    $('.add-item').click(function(){ $.cookie( 'editID', null); });
+    // 退出
+    $('#exit').click(function(){
+      if(confirm('确定退出吗？')){
+        $.cookie( 'accessToken', null);
+        Common.backLogin();
+      }
+    });
+});
+</script>
+
+<script type="text/javascript" src="js/jQuery/cropper.js"></script>
+<script type="text/javascript" src="js/exif.js"></script>
+<script type="text/javascript">
+var cancel = function(){
+    if(confirm('确定取消吗？')){
+        window.history.back();
+    }
+}
+$(function(){
+    // 获取省份
+    var getProvincesFn = function(val){
+        $.post(API.getProvinces, {
+            token: $.cookie('accessToken'),
+            type: 'province'
+        }, function(data){
+            for(var i=0; i<data.list.length; i++){
+                if(val && val == data.list[i].value) $('#bankaddress_p').append('<option value="'+data.list[i].value+'" selected>'+data.list[i].text+'</option>');
+                else $('#bankaddress_p').append('<option value="'+data.list[i].value+'">'+data.list[i].text+'</option>');
+            }
+        });
+    }
+    var getCityFn = function(val, sel){
+        $.post(API.getProvincecity, {
+            token: $.cookie('accessToken'),
+            pid: val
+        }, function(data){
+            for(var i=0; i<data.list.length; i++){
+                if(sel && sel == data.list[i].value) $('#bankaddress_c').append('<option value="'+data.list[i].value+'" selected>'+data.list[i].text+'</option>');
+                else $('#bankaddress_c').append('<option value="'+data.list[i].value+'">'+data.list[i].text+'</option>');
+                // $('#bankaddress_c').append('<option value="'+data.list[i].value+'">'+data.list[i].text+'</option>');
+            }
+        });
+    }
+    $('#bankaddress_p').change(function(){
+        $('#bankaddress_c').html('<option value="-1">请选择</option>');
+        getCityFn($('#bankaddress_p').val());
+    });
+    getProvincesFn();
+    // 
+    var upload = {
+        active: '',
+        operateface1: '',
+        operateface2: '',
+        insitutionface: '',
+        storeface: ''
+    }
+    // 上传图片
+    $('.btn-write').click(function(){
+        upload.active = $(this).attr('data-id');
+        $('#fileCrop').click();
+    });
+    // 选择图片
+    $('#fileCrop').change(function(){
+        $('#wrap').html('<img class="cropper">')
+        var file = document.getElementById('fileCrop').files[0];
+        $().popup({container: '.crop-wrap'});
+        EXIF.getData(file, function(){
+            var obj = Object.assign({}, EXIF.getAllTags(this))
+            orientation = obj.Orientation
+        });
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            Common.getImgData(e.target.result, orientation, function(data){
+                var pic = new Image()
+                pic.src = data
+                pic.onload= function() {
+                    $('.cropper').attr('src', data);
+                    setTimeout(function(){
+                        $(".cropper").cropper();
+                    }, 100);
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+    // 裁剪
+    $('#saveImg').click(function(){
+        $(this).hide().next('.btn-hide').show();
+        var dataURL = $(".cropper").cropper("getDataURL");
+        var picURL = dataURL.replace(/^.*?,/, '');
+        $.post(API.uploadImage, {
+            token: $.cookie('accessToken'),
+            base64: picURL
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            upload[upload.active] = data.list;
+            console.log(upload);
+            showImg();
+            $('#saveImg').show();
+            $('.btn-hide').hide();
+            $().popup({container: '.crop-wrap', close: true});
+        });
+    });
+
+    // 显示图片
+    var showImg = function(){
+        if(upload.operateface1){ $('#operateface1').attr('src', HOST + upload.operateface1).css('display', 'block');}
+        if(upload.operateface2){ $('#operateface2').attr('src', HOST + upload.operateface2).css('display', 'block');}
+        if(upload.insitutionface){ $('#insitutionface').attr('src', HOST + upload.insitutionface).css('display', 'block');}
+        if(upload.storeface){ $('#storeface').attr('src', HOST + upload.storeface).css('display', 'block');}
+    }
+
+    $('#submit').click(function(){
+        var ver = true;
+        if($('#bankaddress_p').val() == -1 || $('#bankaddress_c').val() == -1){
+            alert('请选择开户地点！');
+            return;
+        }
+        if(!upload.operateface1 || !upload.operateface2 || !upload.insitutionface || !upload.storeface){
+            alert('请上传相关相片！');
+            return;
+        }
+        $('input[type="text"]').each(function(){
+            if($(this).val().toString().length <= 0){
+                ver = false;
+                alert('请填写'+$(this).parent().prev().text());
+                return false;
+            }
+        });
+        $('textarea').each(function(){
+            if($(this).val().toString().length <= 0){
+                ver = false;
+                alert('请填写'+$(this).parent().prev().text());
+                return false;
+            }
+        });
+        if($('#com-bankaccount').val() != $('#com-bankaccount-re').val()){
+            alert('企业对公账号不一致！');
+            return;
+        }
+        if(!ver) return;
+        $().popup({loading: 'true'});
+        $.post(API.uploadStoreowner, {
+            token: $.cookie('accessToken'),
+            name: $('#com-name').val(),
+            licence: $('#com-licence').val(),
+            institution: $('#com-institution').val(),
+            present: $('#com-present').val(),
+            engagein: $('#com-engagein').val(),
+            exengagein: $('#com-exengagein').val(),
+            nameforbank: $('#com-nameforbank').val(),
+            bankname: $('#com-bankname').val(),
+            bankaccount: $('#com-bankaccount').val(),
+            operatename: $('#com-operatename').val(),
+            operatepai: $('#com-operatepai').val(),
+            operatephone: $('#com-operatephone').val(),
+            operatetel: $('#com-operatetel').val(),
+            operateemail: $('#com-operateemail').val(),
+            operateid: $('#com-operateid').val(),
+            operateface1: upload.operateface1,
+            operateface2: upload.operateface2,
+            insitutionface: upload.insitutionface,
+            storeface: upload.storeface,
+            bankaddress_p: $('#bankaddress_p').val(),
+            bankaddress_c: $('#bankaddress_c').val(),
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            alert('上传成功！');
+            window.history.back();
+        });
+    });
+    // 获取
+    $.post(API.getCompanyInfo, {
+        token: $.cookie('accessToken')
+    }, function(data){
+        if(data.list){
+            $('#com-name').val(data.list.owner_name);
+            $('#com-licence').val(data.list.owner_licence);
+            $('#com-institution').val(data.list.owner_institution);
+            $('#com-present').val(data.list.owner_present);
+            $('#com-engagein').val(data.list.owner_engagein);
+            $('#com-exengagein').val(data.list.owner_exengagein);
+            $('#com-nameforbank').val(data.list.owner_nameforbank);
+            $('#com-bankname').val(data.list.owner_bankname);
+            $('#com-bankaccount').val(data.list.owner_bankaccount);
+            $('#com-operatename').val(data.list.owner_operatename);
+            $('#com-operatepai').val(data.list.owner_operatepai);
+            $('#com-operatephone').val(data.list.owner_operatephone);
+            $('#com-operatetel').val(data.list.owner_operatetel);
+            $('#com-operateemail').val(data.list.owner_operateemail);
+            $('#com-operateid').val(data.list.owner_operateid);
+            $('#com-operateemail').val(data.list.owner_operateemail);
+            $('#com-operateemail').val(data.list.owner_operateemail);
+            upload.operateface1 = data.list.owner_operateface1;
+            upload.operateface2 = data.list.owner_operateface2;
+            upload.insitutionface = data.list.owner_insitutionface;
+            upload.storeface = data.list.owner_storeface;
+            showImg();
+            getProvincesFn(data.list.owner_bankaddress_p);
+            getCityFn(data.list.owner_bankaddress_p, data.list.owner_bankaddress_c);
+        }
+    });
+});
+</script>
+</body>
+</html>

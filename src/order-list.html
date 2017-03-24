@@ -1,0 +1,249 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-list">
+    <div class="tab">
+        <a class="active" data-type="">当天</a>
+        <a data-type="week">一周内</a>
+        <a data-type="month">一月内</a>
+    </div>
+    <table class="header">
+        <tr>
+            <th width="20%">订单信息</th>
+            <th width="25%">项目</th>
+            <th width="10%">技师</th>
+            <th width="10%">订单金额</th>
+            <th width="10%">房间</th>
+            <th width="15%">订单状态</th>
+            <th width="10%">订单操作</th>
+        </tr>
+    </table>
+    <div class="order-list-container"></div>
+    <div class="tools">
+        <a class="export">导出Excel表格</a>
+        <div class="pages"></div>
+    </div>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有任何订单哦</div>
+</div>
+
+<div class="dialog big update-pwd">
+    <div class="title">导出数据<a class="close">&times;</a></div>
+    <div class="container">
+        <table class="table-default">
+            <tr>
+                <td align="right">开始日期：</td>
+                <td><input id="start" type="text" class="input-default laydate-icon" onclick="laydate({max: laydate.now()})" name=""></td>
+            </tr>
+            <tr>
+                <td align="right">结束日期：</td>
+                <td><input id="end" type="text" class="input-default laydate-icon" onclick="laydate({max: laydate.now()})" name=""></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td align="left">
+                    <button class="btn btn-default btn-small close">取消</button>
+                    <button class="btn btn-show btn-small" id="upsbumit">确定</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script src="js/jQuery/laydate.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(2)').addClass('active');
+    // 
+    var type = '';
+    var page = 1;
+    // 切换
+    $('.tab a').click(function(event) {
+        $('.tab a').removeClass('active');
+        $(this).addClass('active');
+        page = 1;
+        type = $(this).attr('data-type');
+        getOrderList();
+    });
+    // 翻页
+    $('.pages').on('click', 'a', function(){
+        page = parseInt($(this).text());
+        getOrderList();
+    });
+    // 获取订单列表
+    var getOrderList = function(){
+        $('.no').hide();
+        $('.tools').show();
+        $('.order-list-container').html('');
+        $().popup({loading: 'true'});
+        $.post(API.getPcOrderList, {
+            token: $.cookie('accessToken'),
+            type: type,
+            page: page,
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(data.list.length <= 0){
+                $('.no').show();
+                $('.tools').hide();
+                return;
+            }
+            // 分页按钮
+            $('.pages').html('');
+            if(page == 1){
+                $('.pages').append('<a class="active">1</a>');
+            }else{
+                $('.pages').append('<a>1</a>');
+            }
+            for(var lp=page-4; lp<=page; lp++){
+                if(lp<=1 || lp>=data.object) continue;
+                if(page == lp){
+                    $('.pages').append('<a class="active">'+lp+'</a>');
+                }else{
+                    $('.pages').append('<a>'+lp+'</a>');
+                }
+            }
+            for(var np=page+1; np<page+5; np++){
+                if(np>=data.object) continue;
+                if(page == np){
+                    $('.pages').append('<a class="active">'+np+'</a>');
+                }else{
+                    $('.pages').append('<a>'+np+'</a>');
+                }
+            }
+            if(data.object != 1){
+                if(page == data.object){
+                    $('.pages').append('<a class="active">'+data.object+'</a>');
+                }else{
+                    $('.pages').append('<a>'+data.object+'</a>');
+                }
+            }
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                // 地址
+                var address = '';
+                if(_data.room_num){
+                    address = _data.room_num + '<br>' + '在店消费';
+                }else if(_data.order_room_num){
+                    address = _data.order_room_num + '<br>' + '技师上门';
+                }
+                // _data.order_address == 0 ? address = '在店消费' : address = '技师上门';
+                // 状态
+                var statusText = '';
+                var cao = ''
+                if(_data.order_status == 1){
+                    if(_data.order_pay == 0){
+                        statusText = '<span class="status active">待支付</span><br><a class="btn btn-show btn-little pay">付款</a>';
+                    }else{
+                        statusText = '<span class="status do">已完成</span>';
+                    }
+                    cao = '<a class="open">查看详情</a>';
+                }
+                if(_data.order_status == 2){
+                    statusText = '<span class="status cancel">已取消</span>';
+                    cao = '<a class="open">查看详情</a><br><a class="del">删除</a>';
+                }
+                if(_data.order_status == 3){
+                    statusText = '<span class="status wait">等待上钟</span><br><a class="btn btn-default btn-little up-work">上钟</a>';
+                    cao = '<a class="open">查看详情</a><br><a class="cancel">取消订单</a>';
+                }
+                if(_data.order_status == 4){
+                    statusText = '<span class="status active">上钟</span><br><a class="btn btn-default btn-little down-work">下钟</a>';
+                    if(_data.order_addtime == 1) statusText+= '<a class="btn btn-default btn-little add-work">加钟</a>';
+                    cao = '<a class="open">查看详情</a>';
+                }
+                if(_data.order_status == 5){
+                    statusText = '<span class="status cancel">已删除</span>';
+                    cao = '<a class="open">查看详情</a>';
+                }
+                if(_data.order_status == 6){
+                    statusText = '<span class="status active">待确认</span>';
+                    cao = '<a class="open">查看详情</a>';
+                }
+                $('.order-list-container').append('\
+                    <table class="item">\
+                        <tr data-id="'+_data.order_id+'">\
+                            <td width="20%" style="text-align: left;">订单号：'+_data.order_num+'<br>交易时间：'+new Date(_data.order_createtime*1000).format('yyyy-MM-dd hh:mm:ss')+'</td>\
+                            <td width="25%" style="text-align: left;">\
+                                <img src="'+HOST+_data.item_image+'" alt="" class="head">'+_data.item_name+'\
+                            </td>\
+                            <td width="10%">'+_data.massagist_no+'<br>'+_data.massagist_name+'</td>\
+                            <td width="10%">￥'+_data.order_totalprice+'</td>\
+                            <td width="10%">'+address+'</td>\
+                            <td width="15%">'+statusText+'</td>\
+                            <td width="10%">'+cao+'</td>\
+                        </tr>\
+                    </table>'
+                );
+            };
+        });
+    }
+    getOrderList();
+
+    // 查看订单详情
+    $('.order-list-container').on('click', 'a.open', function(){
+        $.cookie('order_info_id', $(this).parent().parent().attr('data-id'));
+        window.location.href = "order-info.html";
+    });
+
+    // 上钟操作
+     $('.order-list-container').on('click', 'a.up-work, a.down-work, a.add-work', function(){
+        var action = '';
+        if( $(this).attr('class').indexOf('up-work')>=0 ) action = 'start';
+        if( $(this).attr('class').indexOf('down-work')>=0 ) action = 'end';
+        if( $(this).attr('class').indexOf('add-work')>=0 ) action = 'add';
+        if(confirm('确定操作吗？')){
+            var id = $(this).parent().parent().attr('data-id');
+            $.post(API.pcUpdateOrderStae, {
+                token: $.cookie('accessToken'),
+                id: id,
+                action: action
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                getOrderList();
+            });
+        }
+    });
+
+     // 取消
+    $('.order-list-container').on('click', '.cancel', function(){
+        if(confirm('确认取消吗？')){
+            var id = $(this).parent().parent().attr('data-id');
+            $.post(API.updateOrderStatus, {
+                token: $.cookie('accessToken'),
+                id: id,
+                action: 'cancel',
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                getOrderList();
+            });
+        }
+    });
+    // 删除
+    $('.order-list-container').on('click', '.del', function(){
+        if(confirm('确认删除吗？')){
+            var id = $(this).parent().parent().attr('data-id');
+            $.post(API.updateOrderStatus, {
+                token: $.cookie('accessToken'),
+                id: id,
+                action: 'delete',
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                window.location.href = "order-list.html";
+            });
+        }
+    });
+
+    // 导出
+    $('.export').popup({container: '.update-pwd'});
+    $('#upsbumit').click(function(){
+        if( new Date($("#end").val()) >= new Date($("#start").val()) ){
+            window.open(API.getOrderExcel + '?token=' + $.cookie('accessToken') + '&start=' + $("#start").val() + '&end=' + $("#end").val() );
+        }else{
+            alert('结束日期必须大于开始日期哦！');
+        }
+    })
+})
+</script>
+</body>
+</html>

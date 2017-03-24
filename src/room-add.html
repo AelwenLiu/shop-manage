@@ -1,0 +1,90 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div id="varTitle" class="title">发布房间</div>
+        <div class="section">
+            <table class="table-default">
+                <tr>
+                    <td width="100">楼层</td>
+                    <td><input id="roomStorey" type="text" class="input-little"> 楼</td>
+                </tr>
+                <tr>
+                    <td width="100">房间号</td>
+                    <td><input id="roomNo" type="text" class="input-little"></td>
+                </tr>
+                <tr>
+                    <td width="100">功能</td>
+                    <td><input id="roomFn" type="text" class="input-small"></td>
+                </tr>
+                <tr>
+                    <td width="100">人数</td>
+                    <td><input id="roomPeo" type="text" class="input-little"> 人间</td>
+                </tr>
+            </table>
+        </div>
+        
+        <button id="submit" class="btn btn-show">发布</button>
+        <button class="btn btn-hide">发布中...</button>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript" src="js/jQuery/cropper.js"></script>
+<script type="text/javascript" src="js/exif.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(3)').find('dd:eq(1)').addClass('active');
+    var imageURL = null;
+    // 获取是否修改
+    if($.cookie('editID')){
+        $('#varTitle').text('修改房间');
+        $.post(API.getObejctInfo, {
+            token: $.cookie('accessToken'),
+            type: 'room',
+            pid: $.cookie('editID')
+        }, function(data){
+            if(data.errorInfo){history.go(-1);return;}
+            $('#roomStorey').val(data.object.room_floor);
+            $('#roomNo').val(data.object.room_num);
+            $('#roomFn').val(data.object.room_func);
+            $('#roomPeo').val(data.object.room_size);
+        });
+    }
+    // 提交
+    $('#submit').click(function(event) {
+        var roomStorey = parseInt($('#roomStorey').val());
+        var roomNo = $.trim($('#roomNo').val());
+        var roomFn = $.trim($('#roomFn').val());
+        var roomPeo = parseInt($('#roomPeo').val());
+        if( !roomStorey || !roomNo || !roomFn || !roomPeo || roomPeo<=0 ){
+            alert('内容不有为空');
+            return;
+        }
+        $(this).hide().next('.btn-hide').show();
+        var _data = {
+            token: $.cookie('accessToken'),
+            type: 'room',
+            num: roomNo,
+            size: roomPeo,
+            floor: roomStorey,
+            func: roomFn
+        };
+        if($.cookie('editID')) _data.id = $.cookie('editID');
+        $.post(API.updateObjectInfo, _data, function(data){
+            $('#submit').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('发布成功');
+            window.location.href = "room-list.html";
+        });
+    });
+})
+</script>
+</body>
+</html>
