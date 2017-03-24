@@ -8,7 +8,7 @@ var contentIncluder = require('gulp-content-includer');
 var reload = browserSync.reload;
 // 项目配置
 var app = {
-    version: '0.0.1',
+    version: '0.0.2',
     src: 'src/',
     build: 'build/',
     inc: 'include/'
