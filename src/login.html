@@ -4,21 +4,24 @@
     <div class="header"><img src="img/logo.gif" alt=""></div>
     <div class="banner">
         <div class="login-container">
+            <form name="login" onsubmit="return false;">
             <h2>账户登录</h2>
-            <div class="input"><i class="iconfont">&#xe60e;</i><input class="root" type="text" name="" placeholder="请输入店铺账号"></div>
-            <div class="input"><i class="iconfont">&#xe602;</i><input class="pwd" type="password" name="" placeholder="请输入密码"></div>
+            <div class="input"><i class="iconfont">&#xe60e;</i><input class="root" type="text" placeholder="请输入店铺账号"></div>
+            <div class="input"><i class="iconfont">&#xe602;</i><input class="pwd" type="password" placeholder="请输入密码"></div>
             <div id="code"></div>
             <div class="code-success">通过验证！</div>
             <div class="code-fail">验证失败！</div>
             <button class="submit">登 录</button>
             <button class="submit-ing">登录中...</button>
             <a class="forget">修改密码</a>
+            </form>
         </div>
     </div>
-    <div class="login-foot">&copy; 2016强适信息科技（上海）有限公司</div>
+    <div class="login-foot">&copy; 2016-2017强适信息科技（上海）有限公司</div>
     <div class="dialog big update-pwd">
         <div class="title">修改密码<a class="close">&times;</a></div>
         <div class="container">
+            <!-- <form name="uppsd"> -->
             <table class="table-default">
                 <tr>
                     <td align="right">用户名：</td>
@@ -45,6 +48,7 @@
                     </td>
                 </tr>
             </table>
+            <!-- </form> -->
         </div>
     </div>
 

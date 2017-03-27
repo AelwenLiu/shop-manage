@@ -142,6 +142,9 @@ $(function(){
                 head: head
             };
             $.cookie('order_tech', JSON.stringify(json));
+            if( $.cookie('order_room') && $.cookie('order_tech') && $.cookie('order_project') ){
+                window.location.href = "order-submit.html";
+            }
         }
         getCookie();
     });

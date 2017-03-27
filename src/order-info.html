@@ -152,8 +152,12 @@ $(function(){
                     $('.no-status-pay').hide();
                     $('.success-status-pay').show();
                     $('#sucPay').text('¥' + order.order_totalprice);
-                    $('.suc-pre-pri').text(order.order_discount_price + ', ' + order.order_reduce);
-                    $('.suc-add-pri').text(order.order_add_price + ', ' + order.order_increase);
+                    var _preTx = '';
+                    var _addTx = '';
+                    order.order_reduce ? _preTx = '，' + order.order_reduce : _preTx = '';
+                    order.order_increase ? _addTx = '，' + order.order_increase : _addTx = '';
+                    $('.suc-pre-pri').text(order.order_discount_price + _preTx);
+                    $('.suc-add-pri').text(order.order_add_price + _addTx);
                     $('.suc-item-pri').text(order.order_totalprice - order.order_add_price + parseFloat(order.order_discount_price));
                 }
             }
@@ -232,7 +236,7 @@ $(function(){
     $('#submitPre').click(function(){
         changePrice.prePrice = parseFloat( $('#preMoney').val() ).toFixed(1);
         changePrice.preText = $.trim( $('#preText').val() );
-        if( changePrice.prePrice && changePrice.preText ){
+        if( changePrice.prePrice && changePrice.prePrice != 'NaN' ){
             $('#preMoney').val(changePrice.prePrice);
             $('#preText').val(changePrice.preText);
             $('.preMoney').text(changePrice.prePrice);
@@ -242,7 +246,7 @@ $(function(){
     $('#submitAdd').click(function(){
         changePrice.addPrice = parseFloat( $('#addMoney').val() ).toFixed(1);
         changePrice.addText = $.trim( $('#addText').val() );
-        if( changePrice.addPrice && changePrice.addText ){
+        if( changePrice.addPrice && changePrice.addPrice != 'NaN' ){
             $('#addMoney').val(changePrice.addPrice);
             $('#addText').val(changePrice.addText);
             $('.addMoney').text(changePrice.addPrice);
@@ -276,9 +280,9 @@ $(function(){
         }
     });
     var showTime = function(val, add){
-        let h = Math.floor(val / 60 / 60);
-        let m = Math.floor((val - h * 60 * 60) / 60);
-        let s = Math.floor((val - h * 60 * 60 - m * 60));
+        var h = Math.floor(val / 60 / 60);
+        var m = Math.floor((val - h * 60 * 60) / 60);
+        var s = Math.floor((val - h * 60 * 60 - m * 60));
         var jishi = h + ':' + m + ':' + s;
         $('#val').text(jishi);
         if(add == 1) val--;

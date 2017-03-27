@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telphone=no, email=no"/>
     <title>养生汇系统</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.0.1">
-    <link rel="stylesheet" href="./css/function.css?v=0.0.1">
-    <link rel="stylesheet" href="./css/style.css?v=0.0.1">
+    <link rel="stylesheet" href="./css/base.css?v=0.0.4">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.4">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.4">
 </head>
 <body>
 <div class="menu-container">
@@ -35,7 +35,7 @@
     <div class="rooms-container"></div>
     <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何房间哦</div>
 </div>
-<div class="main-footer">&copy; 2017强适信息科技（上海）有限公司</div>
+<div class="main-footer">&copy; 2016-2017强适信息科技（上海）有限公司</div>
 <script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
 <script type="text/javascript" src="./js/jquery.popup.js"></script>
@@ -44,22 +44,30 @@
 var Common = {
     backLogin: function(){window.location.href = "login.html";},
     getImgData: function(img, dir, next) {
-        let image = new Image();
+        var image = new Image();
         image.onload = function(){
-            let degree = 0,drawWidth,drawHeight,width,height;
+            var degree = 0,drawWidth,drawHeight,width,height;
             drawWidth = this.naturalWidth;
             drawHeight = this.naturalHeight;
             if(drawWidth > 2000 || drawHeight > 2000){
                 drawWidth = drawWidth / 3;
                 drawHeight = drawHeight / 3;
             }
-            let canvas = document.createElement('canvas');
+            var canvas = document.createElement('canvas');
             canvas.width = width = drawWidth;
             canvas.height = height = drawHeight; 
-            let context = canvas.getContext('2d');
-            let isRouter = true;
+            var context = canvas.getContext('2d');
+            var isRouter = true;
             //判断图片方向，重置canvas大小，确定旋转角度，iphone默认的是home键在右方的横屏拍摄方式
             switch(dir){
+                //iphone横屏拍摄，此时home键在左侧
+                case 0:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 90;
+                    drawWidth = width;
+                    drawHeight = -height;
+                    break;
                 //iphone横屏拍摄，此时home键在左侧
                 case 3:
                     degree = 180;

@@ -1,6 +1,7 @@
 $width: 1200px;
 $show-color: #fea430;
 .show-color{color: $show-color;}
+input{outline:none;}
 .show-images{
     width: 40%;
     display: none;
@@ -252,7 +253,7 @@ $show-color: #fea430;
             input{margin-bottom: 10px;}
         }
         .left{
-            font-size: 18px;
+            font-size: 16px;
             color: #333;
             text-align: left;
             width: 180px;
@@ -265,7 +266,7 @@ $show-color: #fea430;
             padding-left: 30px;
             text-align: left;
             &.content{
-                font-size: 16px;
+                font-size: 12px;
                 color: #999;
                 line-height: 30px;
                 position: relative;
@@ -282,7 +283,7 @@ $show-color: #fea430;
         }
         p{
             color: #999;
-            font-size: 16px;
+            font-size: 12px;
             text-align: left;
         }
         a{
@@ -431,13 +432,13 @@ $show-color: #fea430;
             margin: 15px;
             border-bottom: 1px solid #fee7c9;
             position: relative;
-            padding-left: 80px;
+            padding-left: 100px;
             padding-bottom: 15px;
             text-align: left;
             img.head{
                 display: block;
-                width: 60px;
-                height: 60px;
+                width: 80px;
+                // height: 60px;
                 position: absolute;
                 left: 0px;
                 top: 0px;
@@ -520,12 +521,12 @@ $show-color: #fea430;
                 border-bottom: 1px solid;
                 border-color: #fee7c9 + 13;
                 line-height: 22px;
-                img.head{width: 50px; height: 50px;}
+                img.head{width: 80px;}
                 &.gay{ color: #888;}
                 .edit{color: #fea430;}
                 .red{color: #f00;}
                 .green{color: #22ac38;}
-                &:first-child{width: 90px;}
+                &:first-child{width: 100px;}
             }
         }
         .update-img{
@@ -695,8 +696,8 @@ $show-color: #fea430;
             padding: 10px;
             border-bottom: 1px solid #fff4d6;
             &.head{
-                width: 50px;
-                img{display: inline-block;width: 50px; height: 50px;}
+                width: 80px;
+                img{display: inline-block;width: 80px; }
             }
             &.csp, &.cvp{font-size: 14px;}
             &.active{color: $show-color;}
@@ -769,8 +770,8 @@ $show-color: #fea430;
         }
         &.left{td, th{text-align: left;}}
         img.haed{
-            width: 50px;
-            height: 50px;
+            width: 80px;
+            // height: 50px;
         }
     }
     .room-no-text{
@@ -786,7 +787,7 @@ $show-color: #fea430;
         margin-top: 40px;
         margin-bottom: 20px;
         .left-p{
-            width: 65%;
+            width: 70%;
             float: left;
             text-align: left;
             padding-top: 30px;
@@ -802,19 +803,24 @@ $show-color: #fea430;
                 margin: 20px 0px 0px 5%;
                 li{
                     margin-top: 10px;
+                    height: 35px;
+                    line-height: 35px;
                 }
             }
             .input-little{
                 width: 80px;
                 height: 26px;
+                vertical-align: middle;
             }
             .input-small{
                 width: 150px;
                 height: 26px;
+                vertical-align: middle;
             }
+            a.btn-little{vertical-align: top;}
         }
         .right-p{
-            width: 35%;
+            width: 30%;
             float: right;
             h2{
                 font-size: 16px;
@@ -956,8 +962,8 @@ $show-color: #fea430;
             padding: 15px 10px;
             line-height: 20px;
             .head{
-                width: 50px;
-                height: 50px;
+                width: 80px;
+                // height: 50px;
                 margin-right: 10px;
                 vertical-align: middle;
             }

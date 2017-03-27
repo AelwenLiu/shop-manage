@@ -122,6 +122,9 @@ $(function(){
                 cvp: $(this).parent().parent().find('.cvp').text().split('￥')[1]
             };
             $.cookie('order_project', JSON.stringify(json));
+            if( $.cookie('order_room') && $.cookie('order_tech') && $.cookie('order_project') ){
+                window.location.href = "order-submit.html";
+            }
         }
         getCookie();
     });

@@ -3,63 +3,67 @@
   color: #fea430; }
 
 /* line 4, src/style.scss */
+input {
+  outline: none; }
+
+/* line 5, src/style.scss */
 .show-images {
   width: 40%;
   display: none; }
 
-/* line 8, src/style.scss */
+/* line 9, src/style.scss */
 .sel-reg {
   height: 30px;
   border: 1px solid #ddd;
   font-size: 14px;
   margin-right: 10px; }
 
-/* line 14, src/style.scss */
+/* line 15, src/style.scss */
 .table-default {
   width: 100%;
   color: #333;
   font-size: 14px; }
-  /* line 18, src/style.scss */
+  /* line 19, src/style.scss */
   .table-default td {
     padding: 4px 0px; }
 
-/* line 22, src/style.scss */
+/* line 23, src/style.scss */
 .no {
   margin-top: 50px;
   margin-bottom: 40px;
   color: #999;
   display: none;
   font-size: 18px; }
-  /* line 28, src/style.scss */
+  /* line 29, src/style.scss */
   .no i {
     font-size: 60px;
     color: #ddd;
     vertical-align: middle;
     margin-right: 10px; }
 
-/* line 35, src/style.scss */
+/* line 36, src/style.scss */
 .menu-container {
   width: 100%;
   height: 100px;
   margin: 0px auto;
   overflow: hidden;
   background: #fea430; }
-  /* line 41, src/style.scss */
+  /* line 42, src/style.scss */
   .menu-container .main {
     width: 1200px;
     margin: 0px auto;
     height: 100px; }
-    /* line 45, src/style.scss */
+    /* line 46, src/style.scss */
     .menu-container .main .logo {
       font-size: 40px;
       float: left;
       color: #fec843;
       margin-top: 25px; }
-      /* line 50, src/style.scss */
+      /* line 51, src/style.scss */
       .menu-container .main .logo img {
         width: 50px;
         height: 50px; }
-    /* line 55, src/style.scss */
+    /* line 56, src/style.scss */
     .menu-container .main .shop-info {
       float: left;
       margin-top: 38px;
@@ -67,10 +71,10 @@
       margin-left: 10px;
       font-size: 16px;
       color: #fff; }
-      /* line 62, src/style.scss */
+      /* line 63, src/style.scss */
       .menu-container .main .shop-info span {
         font-size: 20px; }
-      /* line 63, src/style.scss */
+      /* line 64, src/style.scss */
       .menu-container .main .shop-info a {
         opacity: .8;
         display: inline-block;
@@ -82,11 +86,11 @@
         font-size: 12px;
         border: 1px solid #fff;
         border-radius: 20px; }
-        /* line 74, src/style.scss */
+        /* line 75, src/style.scss */
         .menu-container .main .shop-info a:hover {
           background-color: #fff;
           color: #fea430; }
-    /* line 80, src/style.scss */
+    /* line 81, src/style.scss */
     .menu-container .main .menu {
       display: block;
       line-height: 85px;
@@ -96,15 +100,15 @@
       margin: 7px 1px;
       border-radius: 3px;
       background: #fea93c; }
-      /* line 89, src/style.scss */
+      /* line 90, src/style.scss */
       .menu-container .main .menu img {
         height: 55px;
         margin: 15px; }
-      /* line 93, src/style.scss */
+      /* line 94, src/style.scss */
       .menu-container .main .menu.active, .menu-container .main .menu:hover {
         background: #feb659; }
 
-/* line 99, src/style.scss */
+/* line 100, src/style.scss */
 .main-footer {
   width: 100%;
   height: 60px;
@@ -114,28 +118,28 @@
   background: #fea430;
   margin-top: 60px; }
 
-/* line 108, src/style.scss */
+/* line 109, src/style.scss */
 .login {
   height: 100%; }
-  /* line 110, src/style.scss */
+  /* line 111, src/style.scss */
   .login .header {
     width: 1200px;
     height: 100px;
     margin: 0px auto;
     overflow: hidden; }
-    /* line 115, src/style.scss */
+    /* line 116, src/style.scss */
     .login .header img {
       display: block;
       float: left;
       margin-top: 30px; }
-  /* line 121, src/style.scss */
+  /* line 122, src/style.scss */
   .login .banner {
     width: 100%;
     height: 460px;
     background: url(../img/login-banner.jpg) center center no-repeat;
     background-size: cover;
     overflow: hidden; }
-    /* line 127, src/style.scss */
+    /* line 128, src/style.scss */
     .login .banner .login-container {
       background: #e6e4e3;
       padding: 30px;
@@ -144,12 +148,12 @@
       margin-top: 60px;
       margin-right: 10%;
       text-align: left; }
-      /* line 135, src/style.scss */
+      /* line 136, src/style.scss */
       .login .banner .login-container h2 {
         font-size: 22px;
         color: #444;
         margin-bottom: 20px; }
-      /* line 140, src/style.scss */
+      /* line 141, src/style.scss */
       .login .banner .login-container .input {
         border: 1px solid #ccc;
         background: #fff;
@@ -159,11 +163,11 @@
         padding-left: 4px;
         overflow: hidden;
         margin-top: 10px; }
-        /* line 149, src/style.scss */
+        /* line 150, src/style.scss */
         .login .banner .login-container .input i {
           color: #999;
           font-size: 22px; }
-        /* line 153, src/style.scss */
+        /* line 154, src/style.scss */
         .login .banner .login-container .input input {
           height: 30px;
           line-height: 30px;
@@ -175,7 +179,7 @@
           margin-right: 5px;
           display: block;
           float: right; }
-      /* line 166, src/style.scss */
+      /* line 167, src/style.scss */
       .login .banner .login-container button {
         width: 100%;
         height: 40px;
@@ -186,34 +190,34 @@
         font-size: 16px;
         border: 0;
         margin-top: 20px; }
-        /* line 176, src/style.scss */
+        /* line 177, src/style.scss */
         .login .banner .login-container button.submit-ing {
           display: none;
           background: #999; }
-      /* line 181, src/style.scss */
+      /* line 182, src/style.scss */
       .login .banner .login-container a {
         display: block;
         text-align: right;
         margin-top: 10px;
         font-size: 12px;
         color: #444; }
-  /* line 190, src/style.scss */
+  /* line 191, src/style.scss */
   .login .login-foot {
     font-size: 12px;
     color: #666;
     margin-top: 40px;
     margin-bottom: 40px; }
-  /* line 196, src/style.scss */
+  /* line 197, src/style.scss */
   .login #code {
     margin-top: 10px; }
-  /* line 199, src/style.scss */
+  /* line 200, src/style.scss */
   .login .code-fail {
     text-align: center;
     margin-top: 10px;
     font-size: 12px;
     color: #f00;
     display: none; }
-  /* line 206, src/style.scss */
+  /* line 207, src/style.scss */
   .login .code-success {
     text-align: center;
     margin-top: 10px;
@@ -221,7 +225,7 @@
     color: #23af5f;
     display: none; }
 
-/* line 216, src/style.scss */
+/* line 217, src/style.scss */
 .reg .header-container {
   width: 1200px;
   height: 100px;
@@ -229,16 +233,16 @@
   background: #fea430;
   overflow: hidden;
   width: 100%; }
-  /* line 223, src/style.scss */
+  /* line 224, src/style.scss */
   .reg .header-container .header {
     width: 1200px;
     margin: 0px auto; }
-  /* line 227, src/style.scss */
+  /* line 228, src/style.scss */
   .reg .header-container img {
     display: block;
     float: left;
     margin-top: 20px; }
-/* line 233, src/style.scss */
+/* line 234, src/style.scss */
 .reg .h1-title {
   width: 1200px;
   margin: 30px auto;
@@ -248,45 +252,45 @@
   height: 40px;
   line-height: 40px;
   border-bottom: 1px solid #ddd; }
-  /* line 242, src/style.scss */
+  /* line 243, src/style.scss */
   .reg .h1-title span {
     color: #999; }
-/* line 244, src/style.scss */
+/* line 245, src/style.scss */
 .reg .reg-table {
   width: 1200px;
   margin: 0px auto;
   line-height: 24px; }
-  /* line 248, src/style.scss */
+  /* line 249, src/style.scss */
   .reg .reg-table td {
     vertical-align: top;
     text-align: left;
     padding: 5px 0px 35px 5px; }
-    /* line 252, src/style.scss */
+    /* line 253, src/style.scss */
     .reg .reg-table td input {
       margin-bottom: 10px; }
-  /* line 254, src/style.scss */
+  /* line 255, src/style.scss */
   .reg .reg-table .left {
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
     text-align: left;
     width: 180px;
     padding-right: 20px;
     text-align: left; }
-    /* line 261, src/style.scss */
+    /* line 262, src/style.scss */
     .reg .reg-table .left.show {
       color: #fea430; }
-  /* line 263, src/style.scss */
+  /* line 264, src/style.scss */
   .reg .reg-table .right {
     width: 250px;
     padding-left: 30px;
     text-align: left; }
-    /* line 267, src/style.scss */
+    /* line 268, src/style.scss */
     .reg .reg-table .right.content {
-      font-size: 16px;
+      font-size: 12px;
       color: #999;
       line-height: 30px;
       position: relative; }
-      /* line 272, src/style.scss */
+      /* line 273, src/style.scss */
       .reg .reg-table .right.content:after {
         content: '';
         width: 2px;
@@ -295,23 +299,23 @@
         left: 0px;
         top: 0px;
         height: 160px; }
-  /* line 283, src/style.scss */
+  /* line 284, src/style.scss */
   .reg .reg-table p {
     color: #999;
-    font-size: 16px;
+    font-size: 12px;
     text-align: left; }
-  /* line 288, src/style.scss */
+  /* line 289, src/style.scss */
   .reg .reg-table a {
     color: #008ff3; }
 
-/* line 293, src/style.scss */
+/* line 294, src/style.scss */
 .main-container {
   border: 1px solid #fee7c9;
   width: 1200px;
   min-height: 400px;
   margin: 20px auto;
   position: relative; }
-  /* line 299, src/style.scss */
+  /* line 300, src/style.scss */
   .main-container .c-left {
     position: absolute;
     left: 0px;
@@ -319,12 +323,12 @@
     height: 100%;
     width: 22%;
     border-right: 1px solid #fee7c9; }
-    /* line 306, src/style.scss */
+    /* line 307, src/style.scss */
     .main-container .c-left dl {
       width: 100%;
       margin-top: 15px;
       text-align: left; }
-      /* line 310, src/style.scss */
+      /* line 311, src/style.scss */
       .main-container .c-left dl dt {
         font-size: 20px;
         color: #222;
@@ -333,7 +337,7 @@
         overflow: hidden;
         padding-left: 10px;
         margin-bottom: 10px; }
-        /* line 318, src/style.scss */
+        /* line 319, src/style.scss */
         .main-container .c-left dl dt i {
           width: 3px;
           height: 22px;
@@ -342,41 +346,41 @@
           background: #fea430;
           vertical-align: middle;
           margin-right: 10px; }
-      /* line 328, src/style.scss */
+      /* line 329, src/style.scss */
       .main-container .c-left dl dd {
         width: 100%;
         padding-left: 25px;
         font-size: 14px;
         height: 30px;
         line-height: 30px; }
-        /* line 334, src/style.scss */
+        /* line 335, src/style.scss */
         .main-container .c-left dl dd a {
           display: inline-block;
           width: 100%;
           height: 100%;
           color: #888; }
-        /* line 340, src/style.scss */
+        /* line 341, src/style.scss */
         .main-container .c-left dl dd.active {
           background: #fff3e3; }
-          /* line 342, src/style.scss */
+          /* line 343, src/style.scss */
           .main-container .c-left dl dd.active a {
             color: #222; }
-  /* line 347, src/style.scss */
+  /* line 348, src/style.scss */
   .main-container .c-right {
     padding-bottom: 20px;
     width: 75%;
     min-height: 500px;
     float: right;
     border-left: 1px solid #fee7c9; }
-    /* line 353, src/style.scss */
+    /* line 354, src/style.scss */
     .main-container .c-right #noImgs {
       display: block;
       width: 50%;
       margin: 15px; }
-      /* line 357, src/style.scss */
+      /* line 358, src/style.scss */
       .main-container .c-right #noImgs img {
         width: 100%; }
-    /* line 359, src/style.scss */
+    /* line 360, src/style.scss */
     .main-container .c-right .title {
       height: 50px;
       font-size: 22px;
@@ -387,31 +391,31 @@
       background: #fff3e3;
       line-height: 50px;
       border-bottom: 1px solid #fee7c9; }
-      /* line 369, src/style.scss */
+      /* line 370, src/style.scss */
       .main-container .c-right .title a, .main-container .c-right .title span {
         float: right;
         font-size: 12px;
         color: #fea430; }
-    /* line 375, src/style.scss */
+    /* line 376, src/style.scss */
     .main-container .c-right h1 {
       font-size: 18px;
       color: #000;
       text-align: left;
       padding-left: 15px;
       margin-bottom: 10px; }
-    /* line 382, src/style.scss */
+    /* line 383, src/style.scss */
     .main-container .c-right .info {
       text-align: left;
       padding-left: 15px;
       font-size: 14px;
       margin-top: 10px;
       color: #222; }
-      /* line 388, src/style.scss */
+      /* line 389, src/style.scss */
       .main-container .c-right .info i {
         color: #fea430;
         font-size: 20px;
         vertical-align: middle; }
-    /* line 390, src/style.scss */
+    /* line 391, src/style.scss */
     .main-container .c-right .section {
       width: 100%;
       margin-bottom: 20px;
@@ -419,33 +423,33 @@
       padding: 15px;
       position: relative;
       text-align: left; }
-      /* line 397, src/style.scss */
+      /* line 398, src/style.scss */
       .main-container .c-right .section h1 {
         padding-left: 0px;
         font-size: 16px; }
-        /* line 397, src/style.scss */
+        /* line 398, src/style.scss */
         .main-container .c-right .section h1 span {
           color: #999;
           font-size: 14px; }
-      /* line 398, src/style.scss */
+      /* line 399, src/style.scss */
       .main-container .c-right .section table {
         width: 100%; }
-        /* line 400, src/style.scss */
+        /* line 401, src/style.scss */
         .main-container .c-right .section table .td-start {
           width: 140px;
           border-right: 1px solid #eee;
           text-align: center; }
-          /* line 404, src/style.scss */
+          /* line 405, src/style.scss */
           .main-container .c-right .section table .td-start em {
             color: #fea430;
             font-size: 30px;
             font-weight: bold;
             display: inline-block;
             margin-bottom: 10px; }
-        /* line 412, src/style.scss */
+        /* line 413, src/style.scss */
         .main-container .c-right .section table .td-pl-ch {
           padding-left: 30px; }
-        /* line 413, src/style.scss */
+        /* line 414, src/style.scss */
         .main-container .c-right .section table a.plbtn {
           display: inline-block;
           margin-left: 5px;
@@ -455,44 +459,43 @@
           font-size: 14px;
           background: #f6f6f6;
           color: #333; }
-          /* line 422, src/style.scss */
+          /* line 423, src/style.scss */
           .main-container .c-right .section table a.plbtn:hover, .main-container .c-right .section table a.plbtn.active {
             background: #fea430;
             color: #fff;
             border-color: #fff; }
-    /* line 430, src/style.scss */
+    /* line 431, src/style.scss */
     .main-container .c-right .comment-container {
       margin: 15px;
       border-bottom: 1px solid #fee7c9;
       position: relative;
-      padding-left: 80px;
+      padding-left: 100px;
       padding-bottom: 15px;
       text-align: left; }
-      /* line 437, src/style.scss */
+      /* line 438, src/style.scss */
       .main-container .c-right .comment-container img.head {
         display: block;
-        width: 60px;
-        height: 60px;
+        width: 80px;
         position: absolute;
         left: 0px;
         top: 0px; }
-      /* line 445, src/style.scss */
+      /* line 446, src/style.scss */
       .main-container .c-right .comment-container h4 {
         font-size: 18px;
         color: #222; }
-      /* line 449, src/style.scss */
+      /* line 450, src/style.scss */
       .main-container .c-right .comment-container .fonts {
         font-size: 12px;
         height: 20px;
         color: #999;
         margin-top: 6px; }
-        /* line 449, src/style.scss */
+        /* line 450, src/style.scss */
         .main-container .c-right .comment-container .fonts span {
           float: right; }
-      /* line 450, src/style.scss */
+      /* line 451, src/style.scss */
       .main-container .c-right .comment-container .tags {
         margin-top: 6px; }
-        /* line 452, src/style.scss */
+        /* line 453, src/style.scss */
         .main-container .c-right .comment-container .tags i {
           display: inline-block;
           width: 70px;
@@ -504,31 +507,31 @@
           text-align: center;
           line-height: 25px;
           margin: 0px 5px 5px 0px; }
-      /* line 465, src/style.scss */
+      /* line 466, src/style.scss */
       .main-container .c-right .comment-container p {
         font-size: 14px;
         color: #333;
         line-height: 22px;
         margin-top: 5px; }
-      /* line 471, src/style.scss */
+      /* line 472, src/style.scss */
       .main-container .c-right .comment-container .replys {
         margin-top: 10px;
         color: #fea430;
         font-size: 12px; }
-        /* line 475, src/style.scss */
+        /* line 476, src/style.scss */
         .main-container .c-right .comment-container .replys table {
           width: 100%; }
-      /* line 479, src/style.scss */
+      /* line 480, src/style.scss */
       .main-container .c-right .comment-container .reply {
         float: right;
         margin-top: 10px; }
-    /* line 481, src/style.scss */
+    /* line 482, src/style.scss */
     .main-container .c-right .pages {
       text-align: right;
       margin-top: 20px;
       padding-left: 15px;
       padding-right: 15px; }
-      /* line 486, src/style.scss */
+      /* line 487, src/style.scss */
       .main-container .c-right .pages a {
         display: inline-block;
         width: 30px;
@@ -540,31 +543,31 @@
         margin-left: 1px;
         margin-right: 1px;
         border: 1px solid #dfdfdd; }
-        /* line 497, src/style.scss */
+        /* line 498, src/style.scss */
         .main-container .c-right .pages a.active, .main-container .c-right .pages a:hover {
           background: #fea430;
           color: #fff;
           border-color: #fff; }
-    /* line 500, src/style.scss */
+    /* line 501, src/style.scss */
     .main-container .c-right .pro-table {
       margin: 15px auto;
       width: 96%;
       text-align: left; }
-      /* line 504, src/style.scss */
+      /* line 505, src/style.scss */
       .main-container .c-right .pro-table .center {
         text-align: center; }
-      /* line 505, src/style.scss */
+      /* line 506, src/style.scss */
       .main-container .c-right .pro-table thead {
         border-bottom: 1px solid #fee7c9; }
-        /* line 507, src/style.scss */
+        /* line 508, src/style.scss */
         .main-container .c-right .pro-table thead th {
           color: #333;
           font-size: 14px;
           padding-bottom: 10px; }
-      /* line 514, src/style.scss */
+      /* line 515, src/style.scss */
       .main-container .c-right .pro-table tr:hover {
         background: #fffbf4; }
-      /* line 516, src/style.scss */
+      /* line 517, src/style.scss */
       .main-container .c-right .pro-table td {
         font-size: 14px;
         padding-bottom: 7px;
@@ -572,33 +575,32 @@
         border-bottom: 1px solid;
         border-color: #fff4d6;
         line-height: 22px; }
-        /* line 523, src/style.scss */
-        .main-container .c-right .pro-table td img.head {
-          width: 50px;
-          height: 50px; }
         /* line 524, src/style.scss */
+        .main-container .c-right .pro-table td img.head {
+          width: 80px; }
+        /* line 525, src/style.scss */
         .main-container .c-right .pro-table td.gay {
           color: #888; }
-        /* line 525, src/style.scss */
+        /* line 526, src/style.scss */
         .main-container .c-right .pro-table td .edit {
           color: #fea430; }
-        /* line 526, src/style.scss */
+        /* line 527, src/style.scss */
         .main-container .c-right .pro-table td .red {
           color: #f00; }
-        /* line 527, src/style.scss */
+        /* line 528, src/style.scss */
         .main-container .c-right .pro-table td .green {
           color: #22ac38; }
-        /* line 528, src/style.scss */
+        /* line 529, src/style.scss */
         .main-container .c-right .pro-table td:first-child {
-          width: 90px; }
-    /* line 531, src/style.scss */
+          width: 100px; }
+    /* line 532, src/style.scss */
     .main-container .c-right .update-img {
       position: relative; }
-      /* line 533, src/style.scss */
+      /* line 534, src/style.scss */
       .main-container .c-right .update-img .file-add {
         width: 100%;
         cursor: pointer; }
-    /* line 535, src/style.scss */
+    /* line 536, src/style.scss */
     .main-container .c-right input.update-logo-btn {
       width: 115px;
       height: 115px;
@@ -607,32 +609,32 @@
       opacity: 0;
       left: 15px;
       top: 45px; }
-    /* line 544, src/style.scss */
+    /* line 545, src/style.scss */
     .main-container .c-right #logoDate {
       width: 115px;
       height: 115px;
       position: relative;
       background-size: cover; }
-    /* line 551, src/style.scss */
+    /* line 552, src/style.scss */
     .main-container .c-right #bannersWrap li {
       width: 19%;
       margin-right: 1%;
       float: left; }
-      /* line 555, src/style.scss */
+      /* line 556, src/style.scss */
       .main-container .c-right #bannersWrap li img {
         width: 100%;
         height: 100%; }
-    /* line 561, src/style.scss */
+    /* line 562, src/style.scss */
     .main-container .c-right .project-select {
       width: 100%;
       margin: 10px auto; }
-      /* line 564, src/style.scss */
+      /* line 565, src/style.scss */
       .main-container .c-right .project-select li {
         width: 25%;
         text-align: left;
         padding: 6px 4px;
         float: left; }
-  /* line 572, src/style.scss */
+  /* line 573, src/style.scss */
   .main-container a.del-img {
     display: block;
     width: 100%;
@@ -648,25 +650,25 @@
     left: 0px;
     bottom: 0px; }
 
-/* line 590, src/style.scss */
+/* line 591, src/style.scss */
 .dialog #wrap {
   width: 100%;
   height: 300px; }
 
-/* line 595, src/style.scss */
+/* line 596, src/style.scss */
 #fileCrop {
   position: absolute;
   left: -10000px; }
 
-/* line 600, src/style.scss */
+/* line 601, src/style.scss */
 .order-container {
   border: 0; }
-  /* line 602, src/style.scss */
+  /* line 603, src/style.scss */
   .order-container .order-menu {
     height: 40px;
     border-left: 1px solid #fee7c9;
     border-top: 1px solid #fee7c9; }
-    /* line 606, src/style.scss */
+    /* line 607, src/style.scss */
     .order-container .order-menu a {
       display: block;
       width: 33.33%;
@@ -676,40 +678,40 @@
       line-height: 40px;
       border-right: 1px solid #fee7c9;
       border-bottom: 1px solid #fee7c9; }
-      /* line 615, src/style.scss */
+      /* line 616, src/style.scss */
       .order-container .order-menu a.active {
         background: #fff3e3; }
-  /* line 618, src/style.scss */
+  /* line 619, src/style.scss */
   .order-container .selectd {
     color: #000;
     font-size: bold;
     text-align: left;
     margin-top: 20px; }
-    /* line 623, src/style.scss */
+    /* line 624, src/style.scss */
     .order-container .selectd a {
       display: inline-block;
       padding: 4px;
       color: #fea430;
       border: 1px solid #fea430;
       margin-right: 10px; }
-  /* line 631, src/style.scss */
+  /* line 632, src/style.scss */
   .order-container .select-type {
     color: #000;
     font-size: 500;
     text-align: left;
     margin-top: 20px; }
-    /* line 636, src/style.scss */
+    /* line 637, src/style.scss */
     .order-container .select-type label {
       display: inline-block;
       padding: 6px;
       color: #333;
       border: 1px solid #eee;
       margin-right: 10px; }
-      /* line 642, src/style.scss */
+      /* line 643, src/style.scss */
       .order-container .select-type label.active {
         background: #eee;
         border-color: #fea430; }
-  /* line 645, src/style.scss */
+  /* line 646, src/style.scss */
   .order-container .title-float {
     width: 160px;
     height: 30px;
@@ -719,10 +721,10 @@
     font-size: 18px;
     text-align: center;
     margin: 30px auto 10px auto; }
-  /* line 655, src/style.scss */
+  /* line 656, src/style.scss */
   .order-container .rooms {
     text-align: center; }
-    /* line 657, src/style.scss */
+    /* line 658, src/style.scss */
     .order-container .rooms a {
       display: inline-block;
       width: 120px;
@@ -733,11 +735,11 @@
       background-color: #f9f9f9;
       font-weight: 500;
       line-height: 20px; }
-      /* line 667, src/style.scss */
+      /* line 668, src/style.scss */
       .order-container .rooms a h1 {
         font-size: 22px;
         color: #333; }
-      /* line 668, src/style.scss */
+      /* line 669, src/style.scss */
       .order-container .rooms a h2 {
         font-size: 13px;
         height: 20px;
@@ -745,81 +747,80 @@
         width: 110px;
         overflow: hidden;
         margin: 4px 0px; }
-      /* line 669, src/style.scss */
+      /* line 670, src/style.scss */
       .order-container .rooms a h3 {
         font-size: 12px;
         color: #333; }
-      /* line 670, src/style.scss */
+      /* line 671, src/style.scss */
       .order-container .rooms a h4 {
         font-size: 12px; }
-        /* line 672, src/style.scss */
+        /* line 673, src/style.scss */
         .order-container .rooms a h4.null {
           color: #22ac38; }
-        /* line 673, src/style.scss */
+        /* line 674, src/style.scss */
         .order-container .rooms a h4.have {
           color: #fc0315; }
-        /* line 674, src/style.scss */
+        /* line 675, src/style.scss */
         .order-container .rooms a h4.red {
           color: #f00; }
-      /* line 676, src/style.scss */
+      /* line 677, src/style.scss */
       .order-container .rooms a.active {
         background: #fea430;
         border-color: #fea430; }
-        /* line 679, src/style.scss */
+        /* line 680, src/style.scss */
         .order-container .rooms a.active h1 {
           color: #fff; }
-        /* line 680, src/style.scss */
+        /* line 681, src/style.scss */
         .order-container .rooms a.active h2 {
           color: #fff; }
-        /* line 681, src/style.scss */
+        /* line 682, src/style.scss */
         .order-container .rooms a.active h3 {
           color: #fff; }
-        /* line 682, src/style.scss */
+        /* line 683, src/style.scss */
         .order-container .rooms a.active h4 {
           color: #fff; }
-  /* line 686, src/style.scss */
+  /* line 687, src/style.scss */
   .order-container .order-table {
     width: 100%;
     margin-top: 20px;
     text-align: left; }
-    /* line 690, src/style.scss */
+    /* line 691, src/style.scss */
     .order-container .order-table thead {
       border-bottom: 1px solid #fee7c9; }
-      /* line 692, src/style.scss */
+      /* line 693, src/style.scss */
       .order-container .order-table thead th {
         padding: 10px;
         font-size: 14px; }
-        /* line 692, src/style.scss */
+        /* line 693, src/style.scss */
         .order-container .order-table thead th.active {
           color: #fea430; }
-    /* line 694, src/style.scss */
+    /* line 695, src/style.scss */
     .order-container .order-table td {
       padding: 10px;
       border-bottom: 1px solid #fff4d6; }
-      /* line 697, src/style.scss */
+      /* line 698, src/style.scss */
       .order-container .order-table td.head {
-        width: 50px; }
-        /* line 699, src/style.scss */
+        width: 80px; }
+        /* line 700, src/style.scss */
         .order-container .order-table td.head img {
           display: inline-block;
-          width: 50px;
-          height: 50px; }
-      /* line 701, src/style.scss */
+          width: 80px; }
+      /* line 702, src/style.scss */
       .order-container .order-table td.csp, .order-container .order-table td.cvp {
         font-size: 14px; }
-      /* line 702, src/style.scss */
+      /* line 703, src/style.scss */
       .order-container .order-table td.active {
         color: #fea430; }
-      /* line 703, src/style.scss */
+      /* line 704, src/style.scss */
       .order-container .order-table td h1 {
         font-size: 14px;
         color: #333; }
-      /* line 707, src/style.scss */
+      /* line 708, src/style.scss */
       .order-container .order-table td p {
         margin-top: 10px;
         color: #999;
         font-size: 12px; }
-      /* line 712, src/style.scss */
+      /* line 713, src/style.scss */
       .order-container .order-table td a.choose, .order-container .order-table td a.choose-hide {
         display: inline-block;
         width: 80px;
@@ -830,28 +831,28 @@
         border: 2px solid #fea430;
         border-radius: 20px;
         text-align: center; }
-        /* line 722, src/style.scss */
+        /* line 723, src/style.scss */
         .order-container .order-table td a.choose.active, .order-container .order-table td a.choose-hide.active {
           background: #fea430;
           color: #fff; }
-      /* line 724, src/style.scss */
+      /* line 725, src/style.scss */
       .order-container .order-table td a.choose-hide {
         color: #999;
         border: 2px solid #999; }
-      /* line 725, src/style.scss */
+      /* line 726, src/style.scss */
       .order-container .order-table td i {
         cursor: pointer;
         color: #ccc; }
-        /* line 728, src/style.scss */
+        /* line 729, src/style.scss */
         .order-container .order-table td i:hover {
           color: #fea430; }
-  /* line 732, src/style.scss */
+  /* line 733, src/style.scss */
   .order-container .title-info {
     height: 40px;
     line-height: 40px;
     border-bottom: 1px solid #fee7c9;
     text-align: left; }
-    /* line 737, src/style.scss */
+    /* line 738, src/style.scss */
     .order-container .title-info a {
       display: inline-block;
       height: 40px;
@@ -861,98 +862,104 @@
       padding-left: 5px;
       padding-right: 5px;
       border-bottom: 2px solid #fea430; }
-  /* line 748, src/style.scss */
+  /* line 749, src/style.scss */
   .order-container .title {
     font-size: 16px;
     color: #000;
     margin: 20px 0px;
     text-align: left; }
-  /* line 754, src/style.scss */
+  /* line 755, src/style.scss */
   .order-container .info-table {
     width: 75%;
     border-right: 1px solid #fee7c9;
     border-left: 1px solid #fee7c9;
     border-top: 1px solid #fee7c9; }
-    /* line 759, src/style.scss */
+    /* line 760, src/style.scss */
     .order-container .info-table.width {
       width: 100%; }
-    /* line 760, src/style.scss */
+    /* line 761, src/style.scss */
     .order-container .info-table td, .order-container .info-table th {
       text-align: center;
       font-size: 14px;
       border-bottom: 1px solid #fee7c9;
       padding: 15px; }
-    /* line 766, src/style.scss */
+    /* line 767, src/style.scss */
     .order-container .info-table th {
       background: #fff3e3;
       font-weight: bold; }
-    /* line 770, src/style.scss */
+    /* line 771, src/style.scss */
     .order-container .info-table.left td, .order-container .info-table.left th {
       text-align: left; }
-    /* line 771, src/style.scss */
+    /* line 772, src/style.scss */
     .order-container .info-table img.haed {
-      width: 50px;
-      height: 50px; }
-  /* line 776, src/style.scss */
+      width: 80px; }
+  /* line 777, src/style.scss */
   .order-container .room-no-text {
     height: 25px;
     line-height: 25px;
     border: 1px solid #fea430;
     padding-left: 5px; }
-  /* line 783, src/style.scss */
+  /* line 784, src/style.scss */
   .order-container .price-container {
     border-bottom: 1px solid #fee7c9;
     padding-bottom: 10px;
     margin-top: 40px;
     margin-bottom: 20px; }
-    /* line 788, src/style.scss */
+    /* line 789, src/style.scss */
     .order-container .price-container .left-p {
-      width: 65%;
+      width: 70%;
       float: left;
       text-align: left;
       padding-top: 30px; }
-      /* line 793, src/style.scss */
+      /* line 794, src/style.scss */
       .order-container .price-container .left-p .btn-add {
         font-size: 16px;
         color: #fea430; }
-        /* line 796, src/style.scss */
+        /* line 797, src/style.scss */
         .order-container .price-container .left-p .btn-add i {
           vertical-align: top; }
-      /* line 800, src/style.scss */
+      /* line 801, src/style.scss */
       .order-container .price-container .left-p ul {
         width: 90%;
         margin: 20px 0px 0px 5%; }
-        /* line 803, src/style.scss */
+        /* line 804, src/style.scss */
         .order-container .price-container .left-p ul li {
-          margin-top: 10px; }
-      /* line 807, src/style.scss */
+          margin-top: 10px;
+          height: 35px;
+          line-height: 35px; }
+      /* line 810, src/style.scss */
       .order-container .price-container .left-p .input-little {
         width: 80px;
-        height: 26px; }
-      /* line 811, src/style.scss */
+        height: 26px;
+        vertical-align: middle; }
+      /* line 815, src/style.scss */
       .order-container .price-container .left-p .input-small {
         width: 150px;
-        height: 26px; }
-    /* line 816, src/style.scss */
+        height: 26px;
+        vertical-align: middle; }
+      /* line 820, src/style.scss */
+      .order-container .price-container .left-p a.btn-little {
+        vertical-align: top; }
+    /* line 822, src/style.scss */
     .order-container .price-container .right-p {
-      width: 35%;
+      width: 30%;
       float: right; }
-      /* line 819, src/style.scss */
+      /* line 825, src/style.scss */
       .order-container .price-container .right-p h2 {
         font-size: 16px;
         color: #222;
         margin-bottom: 10px; }
-      /* line 824, src/style.scss */
+      /* line 830, src/style.scss */
       .order-container .price-container .right-p h3 {
         font-size: 14px;
         color: #999;
         margin-bottom: 10px; }
-  /* line 831, src/style.scss */
+  /* line 837, src/style.scss */
   .order-container .position-price {
     height: 80px;
     margin-top: 20px;
     position: relative; }
-    /* line 835, src/style.scss */
+    /* line 841, src/style.scss */
     .order-container .position-price a.btn-prev {
       width: 120px;
       height: 36px;
@@ -964,7 +971,7 @@
       position: absolute;
       left: 0px;
       bottom: 0px; }
-    /* line 847, src/style.scss */
+    /* line 853, src/style.scss */
     .order-container .position-price a.submit {
       width: 120px;
       height: 36px;
@@ -976,25 +983,25 @@
       position: absolute;
       right: 0px;
       bottom: 0px; }
-    /* line 859, src/style.scss */
+    /* line 865, src/style.scss */
     .order-container .position-price .p {
       position: absolute;
       right: 0px;
       top: 10px;
       font-size: 17px;
       color: #000; }
-      /* line 865, src/style.scss */
+      /* line 871, src/style.scss */
       .order-container .position-price .p span {
         color: #fea430;
         font-size: 20px; }
-  /* line 868, src/style.scss */
+  /* line 874, src/style.scss */
   .order-container .order-info-container {
     width: 100%;
     margin: 0px auto;
     border: 1px solid #fee7c9;
     padding: 50px 15px 15px 15px;
     position: relative; }
-    /* line 874, src/style.scss */
+    /* line 880, src/style.scss */
     .order-container .order-info-container .info-title-h1 {
       width: 100%;
       padding-left: 15px;
@@ -1009,33 +1016,33 @@
       position: absolute;
       left: 0px;
       top: 0px; }
-    /* line 889, src/style.scss */
+    /* line 895, src/style.scss */
     .order-container .order-info-container .status {
       font-size: 16px; }
-      /* line 891, src/style.scss */
+      /* line 897, src/style.scss */
       .order-container .order-info-container .status.wait {
         color: #fea430; }
-      /* line 892, src/style.scss */
+      /* line 898, src/style.scss */
       .order-container .order-info-container .status.active {
         color: #f00; }
-      /* line 893, src/style.scss */
+      /* line 899, src/style.scss */
       .order-container .order-info-container .status.cancel {
         color: #999; }
-      /* line 894, src/style.scss */
+      /* line 900, src/style.scss */
       .order-container .order-info-container .status.do {
         color: #22ac38; }
-    /* line 896, src/style.scss */
+    /* line 902, src/style.scss */
     .order-container .order-info-container .btn {
       margin: 5px 1px 0px 1px;
       border-radius: 0px; }
-    /* line 897, src/style.scss */
+    /* line 903, src/style.scss */
     .order-container .order-info-container a.open {
       font-size: 14px;
       color: #fea430; }
-    /* line 901, src/style.scss */
+    /* line 907, src/style.scss */
     .order-container .order-info-container a.cancel, .order-container .order-info-container a.del {
       color: #999; }
-    /* line 902, src/style.scss */
+    /* line 908, src/style.scss */
     .order-container .order-info-container .order-infos {
       width: 100%;
       padding: 15px;
@@ -1046,14 +1053,14 @@
       font-size: 15px;
       line-height: 26px; }
 
-/* line 915, src/style.scss */
+/* line 921, src/style.scss */
 .order-list {
   border: 0; }
-  /* line 917, src/style.scss */
+  /* line 923, src/style.scss */
   .order-list .tab {
     width: 100%;
     text-align: left; }
-    /* line 920, src/style.scss */
+    /* line 926, src/style.scss */
     .order-list .tab a {
       display: inline-block;
       text-align: center;
@@ -1063,18 +1070,18 @@
       height: 30px;
       line-height: 28px;
       width: 60px; }
-      /* line 929, src/style.scss */
+      /* line 935, src/style.scss */
       .order-list .tab a:hover, .order-list .tab a.active {
         background-color: #fea430;
         color: #fff; }
-  /* line 932, src/style.scss */
+  /* line 938, src/style.scss */
   .order-list table.header {
     margin-top: 20px;
     background-color: #fff3e3;
     border: 1px solid #fee7c9;
     border-right: 0;
     width: 100%; }
-    /* line 938, src/style.scss */
+    /* line 944, src/style.scss */
     .order-list table.header th {
       text-align: center;
       font-size: 15px;
@@ -1082,69 +1089,68 @@
       padding-top: 10px;
       padding-bottom: 10px;
       border-right: 1px solid #fee7c9; }
-  /* line 947, src/style.scss */
+  /* line 953, src/style.scss */
   .order-list table.item {
     width: 100%;
     margin-bottom: 10px;
     margin-top: -1px;
     border-right: 1px solid #fee7c9;
     border-top: 1px solid #fee7c9; }
-    /* line 953, src/style.scss */
+    /* line 959, src/style.scss */
     .order-list table.item td {
       border-left: 1px solid #fee7c9;
       border-bottom: 1px solid #fee7c9;
       padding: 15px 10px;
       line-height: 20px; }
-      /* line 958, src/style.scss */
+      /* line 964, src/style.scss */
       .order-list table.item td .head {
-        width: 50px;
-        height: 50px;
+        width: 80px;
         margin-right: 10px;
         vertical-align: middle; }
-      /* line 964, src/style.scss */
+      /* line 970, src/style.scss */
       .order-list table.item td .status {
         font-size: 16px; }
-        /* line 966, src/style.scss */
+        /* line 972, src/style.scss */
         .order-list table.item td .status.wait {
           color: #fea430; }
-        /* line 967, src/style.scss */
+        /* line 973, src/style.scss */
         .order-list table.item td .status.active {
           color: #f00; }
-        /* line 968, src/style.scss */
+        /* line 974, src/style.scss */
         .order-list table.item td .status.cancel {
           color: #999; }
-        /* line 969, src/style.scss */
+        /* line 975, src/style.scss */
         .order-list table.item td .status.do {
           color: #22ac38; }
-      /* line 971, src/style.scss */
+      /* line 977, src/style.scss */
       .order-list table.item td .btn {
         margin: 5px 1px 0px 1px;
         border-radius: 0px; }
-      /* line 972, src/style.scss */
+      /* line 978, src/style.scss */
       .order-list table.item td a.open {
         font-size: 14px;
         color: #fea430; }
-      /* line 976, src/style.scss */
+      /* line 982, src/style.scss */
       .order-list table.item td a.cancel, .order-list table.item td a.del {
         color: #999; }
-  /* line 979, src/style.scss */
+  /* line 985, src/style.scss */
   .order-list .tools {
     margin-top: 20px;
     text-align: left;
     font-size: 16px;
     position: relative; }
-    /* line 984, src/style.scss */
+    /* line 990, src/style.scss */
     .order-list .tools a.export {
       position: absolute;
       left: 0px;
       top: 0px;
       color: #fea430; }
-    /* line 990, src/style.scss */
+    /* line 996, src/style.scss */
     .order-list .tools .pages {
       text-align: right;
       width: 100%;
       height: 30px; }
-      /* line 994, src/style.scss */
+      /* line 1000, src/style.scss */
       .order-list .tools .pages a {
         display: inline-block;
         width: 30px;
@@ -1156,39 +1162,39 @@
         margin-left: 1px;
         margin-right: 1px;
         border: 1px solid #dfdfdd; }
-        /* line 1005, src/style.scss */
+        /* line 1011, src/style.scss */
         .order-list .tools .pages a.active, .order-list .tools .pages a:hover {
           background: #fea430;
           color: #fff;
           border-color: #fff; }
 
 @media (max-width: 1200px) {
-  /* line 1015, src/style.scss */
+  /* line 1021, src/style.scss */
   .menu-container .main {
     width: 760px; }
 
-  /* line 1018, src/style.scss */
+  /* line 1024, src/style.scss */
   .login .header {
     width: 760px; }
 
-  /* line 1021, src/style.scss */
+  /* line 1027, src/style.scss */
   .reg .header-container {
     width: 760px; }
-    /* line 1023, src/style.scss */
+    /* line 1029, src/style.scss */
     .reg .header-container .header {
       width: 760px; }
-  /* line 1027, src/style.scss */
+  /* line 1033, src/style.scss */
   .reg .h1-title {
     width: 760px; }
-  /* line 1030, src/style.scss */
+  /* line 1036, src/style.scss */
   .reg .reg-table {
     width: 760px; }
 
-  /* line 1034, src/style.scss */
+  /* line 1040, src/style.scss */
   .main-container {
     width: 760px; }
 
-  /* line 1037, src/style.scss */
+  /* line 1043, src/style.scss */
   .mobile-image {
     width: 520px;
     height: 240px; } }
