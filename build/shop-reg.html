@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telphone=no, email=no"/>
     <title>养生汇系统</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/function.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/style.css?v=0.0.4">
+    <link rel="stylesheet" href="./css/base.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.6">
 </head>
 <body>
 <div class="reg">
@@ -328,17 +328,25 @@ var showWebLogo = function(){
 var getCookie = function(){
     $('.selectd span').html('');
     $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_people')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_people') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_hand')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_hand') ).text +'</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
     if($.cookie('order_project')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
-        $('.order-menu').find('a:eq(0)').addClass('active');
+        $('.order-menu').find('a:eq(2)').addClass('active');
     }
     if($.cookie('order_tech')){
         $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
-        $('.order-menu').find('a:eq(1)').addClass('active');
+        $('.order-menu').find('a:eq(3)').addClass('active');
     }
     if($.cookie('order_room')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
-        $('.order-menu').find('a:eq(2)').addClass('active');
+        $('.order-menu').find('a:eq(4)').addClass('active');
     }
 };
 $(function(){
@@ -355,7 +363,15 @@ $(function(){
         Common.backLogin();
       }
     });
+    // 
+    $('input').focus(function(){
+        $(this).css('border-color', '#f6bd73');
+    });
+    $('input').blur(function(){
+        $(this).css('border-color', '#ddd');
+    });
 });
+    
 </script>
 
 <script type="text/javascript" src="js/jQuery/cropper.js"></script>

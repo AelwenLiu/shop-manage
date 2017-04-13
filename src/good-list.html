@@ -1,0 +1,98 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">商品列表</div>
+        <table class="pro-table">
+            <thead>
+                <th class="center">图片</th>
+                <th class="center">名称</th>
+                <th class="center">价格</th>
+                <th class="center">数量</th>
+                <th class="center">上架</th>
+                <th class="center">下架</th>
+                <th class="center">操作</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何商品哦</div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(6)').find('dd:eq(0)').addClass('active');
+    // 
+    var getProjects = function(){
+        $.post(API.addGoodsList, {
+            token: $.cookie('accessToken')
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                $('.pro-table').hide();
+                return;
+            }
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                // 状态
+                var statuHtml = '';
+                var lowerHTML = '';
+                var topHTML = '';
+                if(_data.goods_status == 1){
+                    topHTML = '<input type="radio" class="top" checked>';
+                    lowerHTML = '<input type="radio" class="lower">';
+                }else{
+                    topHTML = '<input type="radio" class="top">';
+                    lowerHTML = '<input type="radio" class="lower" checked>';
+                }
+                $('tbody').append('\
+                    <tr data-id="'+_data.goods_id+'" data-statu="'+_data.goods_status+'">\
+                        <td class="center"><img src="'+HOST+_data.goods_head+'" alt="" class="head"></td>\
+                        <td class="center">'+_data.goods_name+'</td>\
+                        <td class="center">￥'+_data.goods_price+'</td>\
+                        <td class="center">'+_data.goods_num+'</td>\
+                        <td class="center">'+topHTML+'</td>\
+                        <td class="center">'+lowerHTML+'</td>\
+                        <td class="center"><a href="javascript:;" class="edit">修改</a></td>\
+                    </tr>');
+            }
+        });
+    }
+    getProjects();
+    // 上下架
+    $('tbody').on('click', 'input', function(){
+        if($(this).parent().parent('tr').attr('data-statu') == 1 && $(this).hasClass('top')) return;
+        if($(this).parent().parent('tr').attr('data-statu') == 2 && $(this).hasClass('lower')) return;
+        var type = 'goods';
+            pid = $(this).parent().parent('tr').attr('data-id');
+            action = $(this).attr('class');
+        $().popup({loading: 'true'});
+        $.post(API.updateState, {
+            token: $.cookie('accessToken'),
+            type: type,
+            pid: pid,
+            action: action
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            action=='top' ? alert('上架成功') : alert('下架成功');
+            location.reload();
+        });
+    });
+    // 修改
+    $('tbody').on('click', '.edit', function(){
+        $.cookie( 'editID', $(this).parent().parent('tr').attr('data-id') );
+        window.location.href = "good-add.html";
+    });
+})
+</script>
+</body>
+</html>

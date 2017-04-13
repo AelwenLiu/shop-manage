@@ -1,0 +1,172 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title" id="varTitle">添加人员</div>
+        <div class="section">
+            <table class="table-default">
+                <tr>
+                    <td width="100">工号</td>
+                    <td><input id="techNo" type="text" class="input-small" name=""></td>
+                </tr>
+                <tr>
+                    <td width="100">昵称</td>
+                    <td><input id="techNick" type="text" class="input-small" name=""></td>
+                </tr>
+                <tr>
+                    <td width="100">职位</td>
+                    <td>
+                        <input type="radio" name="type" value="1"> 迎宾&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="type" value="2"> 收银&nbsp;&nbsp;&nbsp;
+                        <input type="radio" name="type" value="3"> 保洁&nbsp;&nbsp;&nbsp;
+                    </td>
+                </tr>
+                
+            </table>
+        </div>
+        <div class="section">
+            <h1>头像</h1>
+            <img src="img/up-head.jpg" class="update-logo-btn">
+            <input type="file" accept="image/gif,image/jpeg,image/jpg,image/png" id="fileCrop">
+            <div id="logoDate" class="hide"><a class="del-img" id="delLogo">删除</a></div>
+        </div>
+        <button class="btn btn-show" id="submit">发布</button>
+        <button class="btn btn-hide">发布中...</button>
+    </div>
+    <div class="clear"></div>
+</div>
+<div class="dialog bigger crop-wrap">
+    <div class="title">编辑图片<a class="close">&times;</a></div>
+    <div class="container">
+        <div id="wrap"></div>
+        <div style="margin-top: 10px;">
+            <button class="btn btn-default btn-small close">取消</button>
+            <button id="saveImg" class="btn btn-show btn-small">确定</button>
+            <button class="btn btn-hide btn-small">上传中...</button>
+        </div>
+    </div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script src="js/jQuery/laydate.js?v=1"></script>
+<script type="text/javascript" src="js/jQuery/cropper.js"></script>
+<script type="text/javascript" src="js/exif.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(5)').find('dd:eq(1)').addClass('active');
+
+    // 获取是否修改
+    if($.cookie('editID')){
+        $('#varTitle').text('修改人员');
+        $.post(API.getGoodsInfo, {
+            token: $.cookie('accessToken'),
+            type: 'people',
+            pid: $.cookie('editID')
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);history.go(-1);return;}
+            $('#techNo').val(data.list.staff_num);
+            $('#techNick').val(data.list.staff_name);
+            logo = data.list.staff_head;
+            showLogo(true);
+            $("input[name='type']").eq(data.list.staff_type-1).attr("checked","checked");
+        });
+    }
+    // logo
+    var logo = null;
+    // 显示logo
+    var showLogo = function(type){
+        if(type){
+            $('.update-logo-btn').hide();
+            $('#logoDate').show().css('backgroundImage', 'url('+HOST + logo+')');
+            $('#logoDate .del-img').show();
+            showWebLogo();
+        }else{
+            $('#logoDate').hide();
+            logo = null;
+            $('.update-logo-btn').show();
+            showWebLogo();
+        }
+    }
+    // 选择logo图片
+    $('.update-logo-btn').click(function(){
+        activeType = 1;
+        $('#fileCrop').click();
+    });
+    // 选择图片
+    $('#fileCrop').change(function(){
+        $('#wrap').html('<img class="cropper">')
+        var file = document.getElementById('fileCrop').files[0];
+        $().popup({container: '.crop-wrap'});
+        EXIF.getData(file, function(){
+            var obj = Object.assign({}, EXIF.getAllTags(this))
+            orientation = obj.Orientation
+        });
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            Common.getImgData(e.target.result, orientation, function(data){
+                var pic = new Image()
+                pic.src = data
+                pic.onload= function() {
+                    $('.cropper').attr('src', data);
+                    setTimeout(function(){
+                        $(".cropper").cropper({aspectRatio: 1 / 1});
+                    }, 100);
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+    // 裁剪
+    $('#saveImg').click(function(){
+        $(this).hide().next('.btn-hide').show();
+        var dataURL = $(".cropper").cropper("getDataURL");
+        var picURL = dataURL.replace(/^.*?,/, '');
+        $.post(API.uploadImage, {
+            token: $.cookie('accessToken'),
+            base64: picURL
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            logo = data.list;
+            showLogo(true);
+            $('#saveImg').show();
+            $('.btn-hide').hide();
+            $().popup({container: '.crop-wrap', close: true});
+        });
+    });
+    // 删除logo
+    $('#delLogo').click(function(event) { showLogo(false); });
+
+    // 发布
+    $('#submit').click(function(){
+        var techNo = $.trim( $('#techNo').val() );
+        var techNick = $.trim( $('#techNick').val() );
+        var type = $.trim($( 'input[name="type"]:checked' ).val() );
+        if( !techNo || !techNick || !type ){
+            alert('内容不能为空');
+            return;
+        }
+        $('#submit').hide().next('.btn-hide').show();
+        var _data = {
+            token: $.cookie('accessToken'),
+            type: type,
+            name: techNick,
+            num: techNo,
+            head: logo
+        };
+        if($.cookie('editID')) _data.id = $.cookie('editID');
+        $.post(API.addStaff, _data, function(data){
+            $('#submit').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('发布成功');
+            window.location.href = "people-list.html";
+        });
+    });
+})
+</script>
+</body>
+</html>

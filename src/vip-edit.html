@@ -1,0 +1,134 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+<div class="order-info-container">
+    <div class="info-title-h1">修改会员</div>
+    <table class="vip-table">
+        <tr>
+            <td width="40%" class="t">会员号</td>
+            <td width="60%" id="member_num"></td>
+        </tr>
+        <tr>
+            <td class="t">姓名</td>
+            <td id="member_name"></td>
+        </tr>
+        <tr>
+            <td class="t">手机号码</td>
+            <td>
+                <input type="text" class="input-default" id="member_tel">
+            </td>
+        </tr>
+        <tr>
+            <td class="t">性别</td>
+            <td>
+                <label><input type="radio" name="sex" value="1"> 男</label>
+                <label><input type="radio" name="sex" value="2"> 女</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="t">客户描述</td>
+            <td>
+                <input type="text" class="input-default" id="member_describe">
+            </td>
+        </tr>
+        <tr>
+            <td class="t">客户经理</td>
+            <td>
+                <select class="input-default" id="manager"></select>
+            </td>
+        </tr>
+        <tr>
+            <td class="t">会员等级</td>
+            <td><input type="text" class="input-little" id="member_level"></td>
+        </tr>
+        <tr>
+            <td class="t">享受折扣</td>
+            <td><input type="text" class="input-little" id="member_discount"></td>
+        </tr>
+        <tr>
+            <td class="t"></td>
+            <td>
+                <button class="btn btn-show btn-small" id="addVipSub">确定</button>
+                <button class="btn btn-hide">处理中...</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(0)').addClass('active');
+    var id = $.cookie('vipId');
+    // 获取信息
+    var getVipFn = function(val){
+        $.post(API.memberInfo, {
+            token: $.cookie('accessToken'),
+            pid: id,
+            type: ''
+        }, function(data){
+            $('#member_num').text(data.list.member_num);
+            $('#member_name').text(data.list.member_name);
+            $('#member_tel').val(data.list.member_tel);
+            $('#member_describe').val(data.list.member_describe);
+            $('#member_level').val(data.list.member_level);
+            $('#member_discount').val(data.list.member_discount);
+            getProvincesFn(data.list.member_manager);
+            data.list.member_sex == 1 ? $('input[name="sex"]:eq(0)').attr('checked', true) : $('input[name="sex"]:eq(1)').attr('checked', true);
+        });
+    }
+
+    // 获取迎宾
+    var getProvincesFn = function(val){
+        $.post(API.getStaffList, {
+            token: $.cookie('accessToken'),
+            type: 'usher'
+        }, function(data){
+            for(var i=0; i<data.list.length; i++){
+                if(val && val == data.list[i].value) $('#manager').append('<option value="'+data.list[i].value+'" selected>'+data.list[i].text+'</option>');
+                else $('#manager').append('<option value="'+data.list[i].value+'">'+data.list[i].text+'</option>');
+            }
+        });
+    }
+    getVipFn();
+
+    // 添加会员
+    $('#addVipSub').click(function(){
+        var num = $.trim($('#member_num').text());
+            name = $.trim($('#member_name').text());
+            tel = $.trim($('#member_tel').val());
+            sex = $.trim($('input[name="sex"]:checked').val());
+            level = $.trim($('#member_level').val());
+            describe = $.trim($('#member_describe').val());
+            discount = $.trim($('#member_discount').val());
+            manager = $.trim($('#manager').val());
+        if(!num){alert('工号必须填写');return false;}
+        if(!name){alert('名称必须填写');return false;}
+        if(!tel || !(/^1[3|4|5|8]\d{9}$/.test(tel))){alert('手机号码必须填写');return false;}
+        if(!sex){alert('性别必须选择');return false;}
+        $('#addVipSub').hide().next('.btn-hide').show();
+        $.post(API.addMember, {
+            token: $.cookie('accessToken'),
+            id: id,
+            num: num,
+            name: name,
+            tel: tel,
+            sex: sex,
+            level: level,
+            describe: describe,
+            discount: discount,
+            manager: manager
+        }, function(data){
+            $('#addVipSub').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('修改成功');
+            window.location.href = 'vip-info.html';
+        });
+    });
+
+});
+</script>
+</body>
+</html>

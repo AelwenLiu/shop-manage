@@ -5,33 +5,29 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telphone=no, email=no"/>
     <title>养生汇系统</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/function.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/style.css?v=0.0.4">
+    <link rel="stylesheet" href="./css/base.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.6">
 </head>
 <body>
 <div class="menu-container">
     <div class="main">
         <div class="logo">店铺LOGO</div>
         <div class="shop-info"><span id="shopTopName"></span> <a id="exit">退出</a></div>
-        <a class="menu" href="#"><img src="img/ico-vip.png"></a>
+        <a class="menu" href="vip.html"><img src="img/ico-vip.png"></a>
         <a class="menu" href="shop.html"><img src="img/ico-submit.png"></a>
         <a class="menu" href="order-list.html"><img src="img/ico-order.png"></a>
         <a class="menu" href="order-choose-project.html"><img src="img/ico-shop.png"></a>
+        <a class="menu" href="rank-tech.html"><img src="img/ico-rank.png"></a>
     </div>
 </div>
 <div class="main-container">
     <div class="c-left">
-        <dl>
+        <dl style="width: 100%;">
     <dt><i></i>店铺</dt>
     <dd><a href="shop.html">店铺信息</a></dd>
     <dd><a href="shop-edit.html">编辑信息</a></dd>
     <dd><a href="shop-comment.html">店铺评价</a></dd>
-</dl>
-<dl>
-    <dt><i></i>技师</dt>
-    <dd><a href="tech-list.html">技师列表</a></dd>
-    <dd><a href="tech-add.html" class="add-item">添加技师</a></dd>
 </dl>
 <dl>
     <dt><i></i>项目</dt>
@@ -39,10 +35,37 @@
     <dd><a href="pro-add.html" class="add-item">发布项目</a></dd>
 </dl>
 <dl>
+    <dt><i></i>技师</dt>
+    <dd><a href="tech-list.html">技师列表</a></dd>
+    <dd><a href="tech-add.html" class="add-item">添加技师</a></dd>
+</dl>
+
+<dl>
     <dt><i></i>房间</dt>
     <dd><a href="room-list.html">房间列表</a></dd>
     <dd><a href="room-add.html" class="add-item">发布房间</a></dd>
 </dl>
+<dl>
+    <dt><i></i>手牌</dt>
+    <dd><a href="hand-list.html">手牌列表</a></dd>
+    <dd><a href="hand-add.html" class="add-item">添加手牌</a></dd>
+</dl>
+<dl>
+    <dt><i></i>人员</dt>
+    <dd><a href="people-list.html">人员列表</a></dd>
+    <dd><a href="people-add.html" class="add-item">添加人员</a></dd>
+</dl>
+<dl>
+    <dt><i></i>商品</dt>
+    <dd><a href="good-list.html">商品列表</a></dd>
+    <dd><a href="good-add.html" class="add-item">添加商品</a></dd>
+</dl>
+<!-- <dl>
+    <dt><i></i>排行榜</dt>
+    <dd><a href="rank-tech.html">技师排行榜</a></dd>
+    <dd><a href="rank-people.html">迎宾排行榜</a></dd>
+</dl> -->
+
     </div>
     <div class="c-right">
         <div id="varTitle" class="title">发布项目</div>
@@ -94,7 +117,7 @@
         </div>
     </div>
 </div>
-<div class="main-footer">&copy; 2016-2017强适信息科技（上海）有限公司</div>
+<div class="main-footer">沪ICP备16046454号-2 &copy; 2016-2017强适信息科技（上海）有限公司</div>
 <script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
 <script type="text/javascript" src="./js/jquery.popup.js"></script>
@@ -200,17 +223,25 @@ var showWebLogo = function(){
 var getCookie = function(){
     $('.selectd span').html('');
     $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_people')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_people') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_hand')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_hand') ).text +'</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
     if($.cookie('order_project')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
-        $('.order-menu').find('a:eq(0)').addClass('active');
+        $('.order-menu').find('a:eq(2)').addClass('active');
     }
     if($.cookie('order_tech')){
         $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
-        $('.order-menu').find('a:eq(1)').addClass('active');
+        $('.order-menu').find('a:eq(3)').addClass('active');
     }
     if($.cookie('order_room')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
-        $('.order-menu').find('a:eq(2)').addClass('active');
+        $('.order-menu').find('a:eq(4)').addClass('active');
     }
 };
 $(function(){
@@ -227,14 +258,22 @@ $(function(){
         Common.backLogin();
       }
     });
+    // 
+    $('input').focus(function(){
+        $(this).css('border-color', '#f6bd73');
+    });
+    $('input').blur(function(){
+        $(this).css('border-color', '#ddd');
+    });
 });
+    
 </script>
 <script type="text/javascript" src="js/jQuery/cropper.js"></script>
 <script type="text/javascript" src="js/exif.js"></script>
 <script type="text/javascript">
 $(function(){
     $('.main').find('.menu:eq(1)').addClass('active');
-    $('.c-left').find('dl:eq(2)').find('dd:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(1)').find('dd:eq(1)').addClass('active');
     var imageURL = null;
     // 获取是否修改
     if($.cookie('editID')){

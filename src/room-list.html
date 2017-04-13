@@ -40,6 +40,7 @@ $(function(){
                 $('.pro-table').hide();
                 return;
             }
+            $('tbody').html('');
             for(var i=0; i<data.list.length; i++){
                 var _data = data.list[i];
                 // 状态
@@ -93,6 +94,15 @@ $(function(){
         $.cookie( 'editID', $(this).parent().parent('tr').attr('data-id') );
         window.location.href = "room-add.html";
     });
+
+    // WebSocket
+    var exampleSocket = new WebSocket("ws://121.43.163.207:9509");
+    exampleSocket.onopen = function (event) {
+        exampleSocket.send($.cookie('accessToken')); 
+    };
+    exampleSocket.onmessage = function (event) {
+        getRooms();
+    }
 })
 </script>
 </body>

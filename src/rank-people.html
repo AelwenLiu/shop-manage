@@ -1,0 +1,70 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">迎宾排行榜 <a href="rank-tech.html">技师排行榜</a></div>
+        <table class="pro-table">
+            <thead>
+                <th class="center">头像</th>
+                <th class="center">工号</th>
+                <th class="center">昵称</th>
+                <th class="center"><a class="">项目消费 <i class="iconfont">&#xe7cb;</i></a></th>
+                <th class="center"><a class="goods_price">商品消费 <i class="iconfont">&#xe7cb;</i></a></th>
+                <th class="center"><a class="vip_price">会员充值 <i class="iconfont">&#xe7cb;</i></a></th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="no"><i class="iconfont">&#xe604;</i>还没有产生排名哦</div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(4)').addClass('active');
+    // 
+    var type = '';
+    var getProjects = function(){
+        $.post(API.getUsherRankingList, {
+            token: $.cookie('accessToken'),
+            type: type
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                $('.pro-table').hide();
+                return;
+            }
+            $('tbody').html('');
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                $('tbody').append('\
+                    <tr>\
+                        <td class="center"><img src="'+HOST+_data.head+'" alt="" class="head"></td>\
+                        <td class="center">'+_data.num+'</td>\
+                        <td class="center">'+_data.name+'</td>\
+                        <td class="center">'+_data.project_price+'</td>\
+                        <td class="center">'+_data.goods_price+'</td>\
+                        <td class="center">'+_data.vip_price+'</td>\
+                    </tr>');
+            }
+        });
+    }
+    getProjects();
+
+    // 
+    $('.pro-table thead a').click(function(event) {
+        $('.pro-table thead i').hide();
+        $(this).find('i').show();
+        type = $(this).attr('class');
+        getProjects();
+    });
+})
+</script>
+</body>
+</html>

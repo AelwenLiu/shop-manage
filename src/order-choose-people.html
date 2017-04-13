@@ -1,0 +1,90 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+    <div class="order-menu">
+        <a class="sel" href="order-choose-people.html">选迎宾</a>
+        <a href="order-choose-hand.html">选手牌</a>
+        <a href="order-choose-project.html">选项目</a>
+        <a href="order-choose-tech.html">选技师</a>
+        <a href="order-choose-room.html">选房间</a>
+    </div>
+    <div class="selectd">已选类目：<span></span></div>
+
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>头像</th>
+                <th>工号</th>
+                <th>昵称</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何迎宾哦</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(3)').addClass('active');
+    // 
+    var getProjects = function(){
+        var _data = {
+            token: $.cookie('accessToken')
+        };
+        // if($.cookie('order_people')) _data.tid = JSON.parse( $.cookie('order_people') ).id;
+        $.post(API.getUsherList, _data, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.object || data.object.length <=0 ){
+                $('.no').show();
+                return;
+            }
+            $('tbody').html('');
+            for(var i=0; i<data.object.length; i++){
+                var _data = data.object[i];
+                var chooseText = '';
+                if($.cookie('order_people') && JSON.parse( $.cookie('order_people') ).id == _data.staff_id){
+                    chooseText = '<a class="choose active">选择</a>';
+                }else{
+                    chooseText = '<a class="choose">选择</a>';
+                }
+                $('tbody').append('\
+                    <tr data-id="'+_data.staff_id+'">\
+                        <td class="head"><img src="'+ HOST + _data.staff_head+'"></td>\
+                        <td class="num">'+_data.staff_num+'</td>\
+                        <td class="name">'+_data.staff_name+'</td>\
+                        <td class="text-right">'+ chooseText +'</td>\
+                    </tr>');
+            }
+        });
+    }
+    getProjects();
+    
+    // 选择
+    $('tbody').on('click', '.choose', function(){
+        if($(this).attr('class').indexOf('active') >= 0){
+            $(this).removeClass('active');
+            $.cookie('order_people', null);
+        }else{
+            var id = $(this).parent().parent().attr('data-id');
+            var text = '迎宾:'+$(this).parent().parent().find('.num').text()+' 昵称:'+$(this).parent().parent().find('.name').text();
+            $('tbody').find('.choose').removeClass('active');
+            $(this).addClass('active');
+            var json = {
+                id: id,
+                text: text
+            };
+            $.cookie('order_people', JSON.stringify(json));
+            if( $.cookie('order_room') && $.cookie('order_tech') && $.cookie('order_people') ){
+                window.location.href = "order-submit.html";
+            }
+        }
+        getCookie();
+    });
+    getCookie();
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+<div class="order-info-container">
+    <div class="info-title-h1">会员详情</div>
+    <div class="title">会员信息</div>
+    <div style="width: 50%; float: left;">
+        <table class="vip-table">
+            <tr>
+                <td width="40%" class="t">会员号</td>
+                <td width="60%" id="member_num"></td>
+            </tr>
+            <tr>
+                <td class="t">姓名</td>
+                <td id="member_name"></td>
+            </tr>
+            <tr>
+                <td class="t">手机号码</td>
+                <td id="member_tel"></td>
+            </tr>
+            <tr>
+                <td class="t">性别</td>
+                <td id="member_sex"></td>
+            </tr>
+        </table>
+    </div>
+    <div style="width: 50%; float: left;">
+        <table class="vip-table">
+            <tr>
+                <td class="t">会员等级</td>
+                <td id="member_level"></td>
+            </tr>
+            <tr>
+                <td class="t">享受折扣</td>
+                <td id="member_discount"></td>
+            </tr>
+            <tr>
+                <td class="t">账户余额</td>
+                <td id="member_balance" style="color: #fea430;"></td>
+            </tr>
+            <tr>
+                <td class="t">会员积分</td>
+                <td id="member_integral"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="clear"></div>
+    <div class="title">会员记录</div>
+    <table class="info-table width">
+        <thead>
+            <tr>
+                <th>日期</th>
+                <th>类型</th>
+                <th>变动金额</th>
+                <th>账户余额</th>
+                <th>变动积分</th>
+                <th>积分余额</th>
+                <th>操作员</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody id="record"></tbody>
+    </table>
+</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(0)').addClass('active');
+    var id = $.cookie('vipId');
+    // 获取信息
+    var getProvincesFn = function(val){
+        $.post(API.memberInfo, {
+            token: $.cookie('accessToken'),
+            pid: id,
+            type: '1'
+        }, function(data){
+            $('#member_num').text(data.list.member_num);
+            $('#member_name').text(data.list.member_name);
+            $('#member_tel').text(data.list.member_tel);
+            data.list.member_sex == 1 ? $('#member_sex').text('男') : $('#member_sex').text('女');
+            $('#member_level').text(data.list.member_level);
+            $('#member_discount').text(data.list.member_discount);
+            $('#member_balance').text(data.list.member_balance);
+            $('#member_integral').text(data.list.member_integral);
+            if(data.list.record && data.list.record.length > 0){
+                $('#record').html('');
+                for(var i=0; i<data.list.record.length; i++){
+                    var _data = data.list.record[i];
+                    var type = '';
+                    if(_data.details_type == 1) type = '<span style="color: #f00;">消费</span>';
+                    if(_data.details_type == 2) type = '<span style="color: #22dc27;">充值</span>';
+                    if(_data.details_type == 3) type = '<span style="color: #f999;">退款</span>';
+                    $('#record').append('<tr>\
+                            <td>'+new Date(_data.details_time*1000).format('yyyy-MM-dd hh:mm:ss')+'</td>\
+                            <td>'+type+'</td>\
+                            <td>￥'+_data.details_price+'</td>\
+                            <td>￥'+_data.details_balance+'</td>\
+                            <td>'+_data.details_integral+'</td>\
+                            <td>'+_data.details_fbalance+'</td>\
+                            <td>'+_data.details_operator+'</td>\
+                            <td>'+_data.details_remarks+'</td>\
+                        </tr>');
+                }
+            }else{
+                $('#record').append('<tr><td colspan="8">暂无记录</td></tr>');
+            }
+        });
+    }
+    getProvincesFn();
+})
+</script>
+</body>
+</html>

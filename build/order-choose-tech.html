@@ -5,25 +5,28 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telphone=no, email=no"/>
     <title>养生汇系统</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/function.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/style.css?v=0.0.4">
+    <link rel="stylesheet" href="./css/base.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.6">
 </head>
 <body>
 <div class="menu-container">
     <div class="main">
         <div class="logo">店铺LOGO</div>
         <div class="shop-info"><span id="shopTopName"></span> <a id="exit">退出</a></div>
-        <a class="menu" href="#"><img src="img/ico-vip.png"></a>
+        <a class="menu" href="vip.html"><img src="img/ico-vip.png"></a>
         <a class="menu" href="shop.html"><img src="img/ico-submit.png"></a>
         <a class="menu" href="order-list.html"><img src="img/ico-order.png"></a>
         <a class="menu" href="order-choose-project.html"><img src="img/ico-shop.png"></a>
+        <a class="menu" href="rank-tech.html"><img src="img/ico-rank.png"></a>
     </div>
 </div>
 <div class="main-container order-container">
     <div class="order-menu">
+        <a href="order-choose-people.html">选迎宾</a>
+        <a href="order-choose-hand.html">选手牌</a>
         <a href="order-choose-project.html">选项目</a>
-        <a href="order-choose-tech.html">选技师</a>
+        <a class="sel" href="order-choose-tech.html">选技师</a>
         <a href="order-choose-room.html">选房间</a>
     </div>
     <div class="selectd">已选类目：<span></span></div>
@@ -37,7 +40,7 @@
                 <th>年龄</th>
                 <th>籍贯</th>
                 <th>状态</th>
-                <th>计时</th>
+                <th width="80">计时</th>
                 <th class="text-center" width="100">调整顺序</th>
                 <th></th>
             </tr>
@@ -46,7 +49,7 @@
     </table>
     <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何技师哦</div>
 </div>
-<div class="main-footer">&copy; 2016-2017强适信息科技（上海）有限公司</div>
+<div class="main-footer">沪ICP备16046454号-2 &copy; 2016-2017强适信息科技（上海）有限公司</div>
 <script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
 <script type="text/javascript" src="./js/jquery.popup.js"></script>
@@ -152,17 +155,25 @@ var showWebLogo = function(){
 var getCookie = function(){
     $('.selectd span').html('');
     $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_people')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_people') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_hand')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_hand') ).text +'</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
     if($.cookie('order_project')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
-        $('.order-menu').find('a:eq(0)').addClass('active');
+        $('.order-menu').find('a:eq(2)').addClass('active');
     }
     if($.cookie('order_tech')){
         $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
-        $('.order-menu').find('a:eq(1)').addClass('active');
+        $('.order-menu').find('a:eq(3)').addClass('active');
     }
     if($.cookie('order_room')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
-        $('.order-menu').find('a:eq(2)').addClass('active');
+        $('.order-menu').find('a:eq(4)').addClass('active');
     }
 };
 $(function(){
@@ -179,7 +190,15 @@ $(function(){
         Common.backLogin();
       }
     });
+    // 
+    $('input').focus(function(){
+        $(this).css('border-color', '#f6bd73');
+    });
+    $('input').blur(function(){
+        $(this).css('border-color', '#ddd');
+    });
 });
+    
 </script>
 <script type="text/javascript">
 $(function(){
@@ -271,7 +290,8 @@ $(function(){
         }, function(data){
             $().popup({loading: 'false'});
             if(data.errorInfo){alert(data.errorInfo);return;}
-            getProjects();
+            // getProjects();
+            location.reload();
         });
     });
     // 选择

@@ -1,0 +1,152 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+<div class="order-info-container">
+    <div class="info-title-h1">会员<span class="moreTitle"></span></div>
+    <div class="title">会员信息</div>
+    <table class="vip-table">
+        <tr>
+            <td width="40%" class="t">会员号</td>
+            <td width="60%" id="member_num"></td>
+        </tr>
+        <tr>
+            <td class="t">姓名</td>
+            <td id="member_name"></td>
+        </tr>
+        <tr>
+            <td class="t">手机号码</td>
+            <td id="member_tel"></td>
+        </tr>
+        <tr>
+            <td class="t">性别</td>
+            <td id="member_sex"></td>
+        </tr>
+        <tr>
+            <td class="t">会员等级</td>
+            <td id="member_level"></td>
+        </tr>
+        <tr>
+            <td class="t">享受折扣</td>
+            <td id="member_discount"></td>
+        </tr>
+    </table>
+    <div class="title">会员<span class="moreTitle"></span></div>
+    <table class="vip-table">
+        <tr>
+            <td width="40%" class="t"><span class="moreTitle"></span>金额</td>
+            <td width="60%"><input type="text" class="input-little" id="price">元</td>
+        </tr>
+        <tr id="reShow" style="display: none;">
+            <td class="t">充值方式</td>
+            <td>
+                <label><input type="radio" name="payType" value="1" checked> 现金</label>&nbsp;&nbsp;
+                <label><input type="radio" name="payType" value="4"> 刷卡</label>&nbsp;&nbsp;
+                <label><input type="radio" name="payType" value="2"> 支付宝</label>&nbsp;&nbsp;
+                <label><input type="radio" name="payType" value="3"> 微信</label>&nbsp;&nbsp;
+                <label><input type="radio" name="payType" value="0"> 其他</label>
+            </td>
+        </tr>
+        <tr>
+            <td class="t">积分</td>
+            <td>
+                <label><input type="radio" name="integraclass" value="1" checked>&nbsp;增加</label>&nbsp;&nbsp;
+                <label><input type="radio" name="integraclass" value="2">&nbsp;减少</label>&nbsp;&nbsp;
+                <input type="text" class="input-little" id="integral">
+            </td>
+        </tr>
+        <tr>
+            <td class="t">备注</td>
+            <td><input type="text" class="input-default" id="remarks"></td>
+        </tr>
+        <!-- <tr>
+            <td class="t">操作人员工号</td>
+            <td><input type="text" class="input-little"></td>
+        </tr> -->
+        <tr>
+            <td class="t">操作员</td>
+            <td><select class="input-little" id="operator"></select></td>
+        </tr>
+        <tr>
+            <td class="t"></td>
+            <td>
+                <button class="btn btn-show btn-small" id="addVipSub">确定</button>
+                <button class="btn btn-hide">处理中...</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(0)').addClass('active');
+    var id = $.cookie('vipId');
+    var type = $.cookie('vipType');
+    if(type == 1) $('.moreTitle').text('消费');
+    if(type == 2){$('.moreTitle').text('充值'); $('#reShow').show();}
+    if(type == 3) $('.moreTitle').text('退款');
+    // 获取信息
+    var getProvincesFn = function(val){
+        $.post(API.memberInfo, {
+            token: $.cookie('accessToken'),
+            pid: id,
+            type: ''
+        }, function(data){
+            $('#member_num').text(data.list.member_num);
+            $('#member_name').text(data.list.member_name);
+            $('#member_tel').text(data.list.member_tel);
+            data.list.member_sex == 1 ? $('#member_sex').text('男') : $('#member_sex').text('女');
+            $('#member_level').text(data.list.member_level);
+            $('#member_discount').text(data.list.member_discount);
+        });
+    }
+    getProvincesFn();
+
+    // 获取收银
+    var getCashieFn = function(val){
+        $.post(API.getStaffList, {
+            token: $.cookie('accessToken'),
+            type: 'cashie'
+        }, function(data){
+            for(var i=0; i<data.list.length; i++){
+                if(val && val == data.list[i].value) $('#operator').append('<option value="'+data.list[i].value+'" selected>'+data.list[i].text+'</option>');
+                else $('#operator').append('<option value="'+data.list[i].value+'">'+data.list[i].text+'</option>');
+            }
+        });
+    }
+    getCashieFn();
+
+    // 处理会员
+    $('#addVipSub').click(function(){
+        var price = $.trim($('#price').val());
+            source = $.trim($('input[name="payType"]:checked').val());
+            integraclass = $.trim($('input[name="integraclass"]:checked').val());
+            integral = $.trim($('#integral').val());
+            remarks = $.trim($('#remarks').val());
+            operator = $.trim($('#operator').val());
+        if( !price || !(/^[1-9]\d*$/.test(price)) ){alert('价格必须填写');return false;}
+        $('#addVipSub').hide().next('.btn-hide').show();
+        $.post(API.rechargMone, {
+            token: $.cookie('accessToken'),
+            id: id,
+            type: type,
+            price: price,
+            source: source,
+            integraclass: integraclass,
+            integral: integral,
+            remarks: remarks,
+            operator: operator
+        }, function(data){
+            $('#addVipSub').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('处理成功');
+            window.location.href = 'vip-info.html';
+        });
+    });
+
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container order-container">
+    <div class="order-menu">
+        <a href="order-choose-people.html">选迎宾</a>
+        <a class="sel" href="order-choose-hand.html">选手牌</a>
+        <a href="order-choose-project.html">选项目</a>
+        <a href="order-choose-tech.html">选技师</a>
+        <a href="order-choose-room.html">选房间</a>
+    </div>
+    <div class="selectd">已选类目：<span></span></div>
+
+    <div class="hands" style="text-align: left;"></div>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何手牌哦</div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(3)').addClass('active');
+    // 
+    var getProjects = function(){
+        var _data = {
+            token: $.cookie('accessToken')
+        };
+        $.post(API.getHandList, _data, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.list || data.list.length <=0 ){
+                $('.no').show();
+                return;
+            }
+            $('.hands').html('');
+            for(var i=0; i<data.list.length; i++){
+                var _data = data.list[i];
+                var chooseText = '';
+                if($.cookie('order_hand') && JSON.parse( $.cookie('order_hand') ).id == _data.hand_id){
+                    chooseText = '<a data-id="'+ _data.hand_id +'" class="choose active">'+ _data.hand_name +'</a>';
+                }else{
+                    chooseText = '<a class="choose" data-id="'+ _data.hand_id +'">'+ _data.hand_name +'</a>';
+                }
+                $('.hands').append(chooseText);
+            }
+        });
+    }
+    getProjects();
+    
+    // 选择
+    $('.hands').on('click', '.choose', function(){
+        if($(this).attr('class').indexOf('active') >= 0){
+            $(this).removeClass('active');
+            $.cookie('order_hand', null);
+        }else{
+            var id = $(this).attr('data-id');
+            var text = '手牌号:'+$(this).text();
+            $('.hands').find('.choose').removeClass('active');
+            $(this).addClass('active');
+            var json = {
+                id: id,
+                text: text
+            };
+            $.cookie('order_hand', JSON.stringify(json));
+            if( $.cookie('order_room') && $.cookie('order_tech') && $.cookie('order_hand') ){
+                window.location.href = "order-submit.html";
+            }
+        }
+        getCookie();
+    });
+    getCookie();
+})
+</script>
+</body>
+</html>

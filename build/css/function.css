@@ -15,6 +15,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 .margin10{margin: 10px 0px;}
+.fl{float: left;}.fr{float: right;}
 .loading{
   display: block;
   width: 100%;
@@ -44,9 +45,9 @@
 .btn-hide{background-color: #999; display: none; border: 0;}
 .btn-small{width:100px;height:32px;line-height:32px; font-size: 14px;}
 .btn-little{width:60px;height:24px;line-height:24px; font-size: 12px;}
-.input-default{ display: block;border: 1px solid #ddd;padding: 0px 5px;color: #333;font-size: 14px;width: 100%; height: 36px; line-height: 36px;}
-.input-small{ display: block;border: 1px solid #ddd;padding: 0px 5px;color: #333;font-size: 14px;width: 50%; height: 36px; line-height: 36px; margin-right: 10px; display: inline-table;}
-.input-little{ display: block;border: 1px solid #ddd;padding: 0px 5px;color: #333;font-size: 14px;width: 20%; height: 36px; line-height: 36px; margin-right: 10px; display: inline-table;}
+.input-default{ display: block;border: 1px solid #ddd;padding: 0px 5px;color: #333;font-size: 14px;width: 100%; height: 32px; line-height: 32px;}
+.input-small{ display: block;border: 1px solid #ddd;padding: 0px 5px;color: #333;font-size: 14px;width: 50%; height: 32px; line-height: 32px; margin-right: 10px; display: inline-table;}
+.input-little{ display: block;border: 1px solid #ddd;padding: 0px 5px;color: #333;font-size: 14px;width: 20%; height: 32px; line-height: 32px; margin-right: 10px; display: inline-table;}
 .textarea-default{ display: block;border: 1px solid #ddd;padding: 5px;color: #333;font-size: 14px;width: 100%; height: 150px;}
 
 .mobile-image{

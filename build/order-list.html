@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telphone=no, email=no"/>
     <title>养生汇系统</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/function.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/style.css?v=0.0.4">
+    <link rel="stylesheet" href="./css/base.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.6">
 </head>
 <body>
 <div class="menu-container">
     <div class="main">
         <div class="logo">店铺LOGO</div>
         <div class="shop-info"><span id="shopTopName"></span> <a id="exit">退出</a></div>
-        <a class="menu" href="#"><img src="img/ico-vip.png"></a>
+        <a class="menu" href="vip.html"><img src="img/ico-vip.png"></a>
         <a class="menu" href="shop.html"><img src="img/ico-submit.png"></a>
         <a class="menu" href="order-list.html"><img src="img/ico-order.png"></a>
         <a class="menu" href="order-choose-project.html"><img src="img/ico-shop.png"></a>
+        <a class="menu" href="rank-tech.html"><img src="img/ico-rank.png"></a>
     </div>
 </div>
 <div class="main-container order-list">
@@ -67,7 +68,22 @@
         </table>
     </div>
 </div>
-<div class="main-footer">&copy; 2016-2017强适信息科技（上海）有限公司</div>
+
+<div class="dialog big consume-container">
+    <div class="title">选择商品<a class="close">&times;</a></div>
+    <div class="container">
+        <table class="table-default">
+            <tbody class="tbody"></tbody>
+            <tr>
+                <td align="center" colspan="4">
+                    <button class="btn btn-default btn-small close">取消</button>
+                    <button class="btn btn-show btn-small" id="selectGood">确定</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="main-footer">沪ICP备16046454号-2 &copy; 2016-2017强适信息科技（上海）有限公司</div>
 <script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
 <script type="text/javascript" src="./js/jquery.popup.js"></script>
@@ -173,17 +189,25 @@ var showWebLogo = function(){
 var getCookie = function(){
     $('.selectd span').html('');
     $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_people')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_people') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_hand')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_hand') ).text +'</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
     if($.cookie('order_project')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
-        $('.order-menu').find('a:eq(0)').addClass('active');
+        $('.order-menu').find('a:eq(2)').addClass('active');
     }
     if($.cookie('order_tech')){
         $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
-        $('.order-menu').find('a:eq(1)').addClass('active');
+        $('.order-menu').find('a:eq(3)').addClass('active');
     }
     if($.cookie('order_room')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
-        $('.order-menu').find('a:eq(2)').addClass('active');
+        $('.order-menu').find('a:eq(4)').addClass('active');
     }
 };
 $(function(){
@@ -200,7 +224,15 @@ $(function(){
         Common.backLogin();
       }
     });
+    // 
+    $('input').focus(function(){
+        $(this).css('border-color', '#f6bd73');
+    });
+    $('input').blur(function(){
+        $(this).css('border-color', '#ddd');
+    });
 });
+    
 </script>
 <script src="js/jQuery/laydate.js?v=1"></script>
 <script type="text/javascript">
@@ -227,7 +259,7 @@ $(function(){
         $('.no').hide();
         $('.tools').show();
         $('.order-list-container').html('');
-        $().popup({loading: 'true'});
+        // $().popup({loading: 'true'});
         $.post(API.getPcOrderList, {
             token: $.cookie('accessToken'),
             type: type,
@@ -282,14 +314,14 @@ $(function(){
                 // _data.order_address == 0 ? address = '在店消费' : address = '技师上门';
                 // 状态
                 var statusText = '';
-                var cao = ''
+                var cao = '';
                 if(_data.order_status == 1){
                     if(_data.order_pay == 0){
-                        statusText = '<span class="status active">待支付</span><br><a class="btn btn-show btn-little pay">付款</a>';
+                        statusText = '<span class="status active">待支付</span><br><a class="btn btn-show btn-little pay open-pay">付款</a>';
                     }else{
                         statusText = '<span class="status do">已完成</span>';
                     }
-                    cao = '<a class="open">查看详情</a>';
+                    cao = '<a class="open">查看详情</a><a class="consume">商品消费</a>';
                 }
                 if(_data.order_status == 2){
                     statusText = '<span class="status cancel">已取消</span>';
@@ -297,12 +329,12 @@ $(function(){
                 }
                 if(_data.order_status == 3){
                     statusText = '<span class="status wait">等待上钟</span><br><a class="btn btn-default btn-little up-work">上钟</a>';
-                    cao = '<a class="open">查看详情</a><br><a class="cancel">取消订单</a>';
+                    cao = '<a class="open">查看详情</a><br><a class="cancel">取消订单</a><a class="consume">商品消费</a>';
                 }
                 if(_data.order_status == 4){
                     statusText = '<span class="status active">上钟</span><br><a class="btn btn-default btn-little down-work">下钟</a>';
                     if(_data.order_addtime == 1) statusText+= '<a class="btn btn-default btn-little add-work">加钟</a>';
-                    cao = '<a class="open">查看详情</a>';
+                    cao = '<a class="open">查看详情</a><a class="consume">商品消费</a>';
                 }
                 if(_data.order_status == 5){
                     statusText = '<span class="status cancel">已删除</span>';
@@ -310,7 +342,7 @@ $(function(){
                 }
                 if(_data.order_status == 6){
                     statusText = '<span class="status active">待确认</span>';
-                    cao = '<a class="open">查看详情</a>';
+                    cao = '<a class="open">查看详情</a><a class="consume">商品消费</a>';
                 }
                 $('.order-list-container').append('\
                     <table class="item">\
@@ -333,7 +365,7 @@ $(function(){
     getOrderList();
 
     // 查看订单详情
-    $('.order-list-container').on('click', 'a.open', function(){
+    $('.order-list-container').on('click', 'a.open, a.open-pay', function(){
         $.cookie('order_info_id', $(this).parent().parent().attr('data-id'));
         window.location.href = "order-info.html";
     });
@@ -385,6 +417,84 @@ $(function(){
             });
         }
     });
+    // 商品消费
+    var goodsInfo = {
+        oid: null,
+        gid: []
+    }
+    $('.order-list-container').on('click', '.consume', function(){
+        goodsInfo.oid = $(this).parent().parent().attr('data-id');
+        $().popup({loading: 'true'});
+        $.post(API.getThisOrderGoods, {
+            token: $.cookie('accessToken'),
+            pid: goodsInfo.oid
+        }, function(data){
+            var goodList = data.list ? data.list : [];
+            $.post(API.addGoodsList, {
+                token: $.cookie('accessToken'),
+                state: 1
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                $().popup({container: '.consume-container'});
+                $().popup({loading: 'false'});
+                $('.consume-container .tbody').html('');
+                for(var i=0; i<data.list.length; i++){
+                    var _data = data.list[i];
+                    // 数量
+                    var numHtml = '<input type="text" value="0">';
+                    for(var j=0; j<goodList.length; j++){
+                        if(goodList[j].id == _data.goods_id){
+                            numHtml = '<input type="text" value="'+goodList[j].num+'">';
+                        }
+                    }
+                    $('.consume-container .tbody').append('\
+                        <tr data-id="'+_data.goods_id+'">\
+                            <td width="50"><img src="'+HOST+_data.goods_head+'" alt="" class="head"></td>\
+                            <td>'+_data.goods_name+'</td>\
+                            <td width="80" class="center">￥'+_data.goods_price+'</td>\
+                            <td width="100" class="center"><div class="number-compass"><a class="left">-</a>'+ numHtml +'<a class="right">+</a></div></td>\
+                        </tr>');
+                }
+            });
+        });
+    });
+
+    $('.consume-container .tbody').on('click', '.left', function(){
+        var _v = parseInt($(this).next().val());
+        if(_v==0) return;
+        $(this).next().val(_v - 1);
+        setGoodId();
+    });
+    $('.consume-container .tbody').on('click', '.right', function(){
+        var _v = parseInt($(this).prev().val());
+        $(this).prev().val(_v + 1);
+        setGoodId();
+    });
+    var setGoodId = function(){
+        goodsInfo.gid = [];
+        for(var i=0; i<$('.consume-container .tbody tr').length; i++){
+            for(var j=0; j<$('.consume-container .tbody tr:eq('+i+')').find('input').val(); j++){
+                goodsInfo.gid.push($('.consume-container .tbody tr:eq('+i+')').attr('data-id'));
+            }
+        }
+    }
+
+    $('#selectGood').click(function(){
+        if(goodsInfo.gid.length == 0){
+            alert('请添加或修改商品');
+            return;
+        }
+        $.post(API.addGoodsThisOrder, {
+            token: $.cookie('accessToken'),
+            id: goodsInfo.oid,
+            goods: goodsInfo.gid,
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('添加成功');
+            $('.close').click();
+            getOrderList();
+        });
+    })
 
     // 导出
     $('.export').popup({container: '.update-pwd'});
@@ -394,7 +504,16 @@ $(function(){
         }else{
             alert('结束日期必须大于开始日期哦！');
         }
-    })
+    });
+
+    // WebSocket
+    var exampleSocket = new WebSocket("ws://121.43.163.207:9509");
+    exampleSocket.onopen = function (event) {
+        exampleSocket.send($.cookie('accessToken')); 
+    };
+    exampleSocket.onmessage = function (event) {
+        getOrderList();
+    }
 })
 </script>
 </body>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="format-detection" content="telphone=no, email=no"/>
+    <title>养生汇系统</title>
+    <link rel="stylesheet" href="./css/base.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.6">
+</head>
+<body>
+<div class="menu-container">
+    <div class="main">
+        <div class="logo">店铺LOGO</div>
+        <div class="shop-info"><span id="shopTopName"></span> <a id="exit">退出</a></div>
+        <a class="menu" href="vip.html"><img src="img/ico-vip.png"></a>
+        <a class="menu" href="shop.html"><img src="img/ico-submit.png"></a>
+        <a class="menu" href="order-list.html"><img src="img/ico-order.png"></a>
+        <a class="menu" href="order-choose-project.html"><img src="img/ico-shop.png"></a>
+        <a class="menu" href="rank-tech.html"><img src="img/ico-rank.png"></a>
+    </div>
+</div>
+<div class="main-container order-container">
+    <div class="order-menu">
+        <a class="sel" href="order-choose-people.html">选迎宾</a>
+        <a href="order-choose-hand.html">选手牌</a>
+        <a href="order-choose-project.html">选项目</a>
+        <a href="order-choose-tech.html">选技师</a>
+        <a href="order-choose-room.html">选房间</a>
+    </div>
+    <div class="selectd">已选类目：<span></span></div>
+
+    <table class="order-table">
+        <thead>
+            <tr>
+                <th>头像</th>
+                <th>工号</th>
+                <th>昵称</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何迎宾哦</div>
+</div>
+<div class="main-footer">沪ICP备16046454号-2 &copy; 2016-2017强适信息科技（上海）有限公司</div>
+<script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
+<script type="text/javascript" src="./js/jquery.popup.js"></script>
+<script type="text/javascript" src="./js/api.js"></script>
+<script type="text/javascript">
+var Common = {
+    backLogin: function(){window.location.href = "login.html";},
+    getImgData: function(img, dir, next) {
+        var image = new Image();
+        image.onload = function(){
+            var degree = 0,drawWidth,drawHeight,width,height;
+            drawWidth = this.naturalWidth;
+            drawHeight = this.naturalHeight;
+            if(drawWidth > 2000 || drawHeight > 2000){
+                drawWidth = drawWidth / 3;
+                drawHeight = drawHeight / 3;
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = width = drawWidth;
+            canvas.height = height = drawHeight; 
+            var context = canvas.getContext('2d');
+            var isRouter = true;
+            //判断图片方向，重置canvas大小，确定旋转角度，iphone默认的是home键在右方的横屏拍摄方式
+            switch(dir){
+                //iphone横屏拍摄，此时home键在左侧
+                case 0:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 90;
+                    drawWidth = width;
+                    drawHeight = -height;
+                    break;
+                //iphone横屏拍摄，此时home键在左侧
+                case 3:
+                    degree = 180;
+                    drawWidth = -width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在下方(正常拿手机的方向)
+                case 6:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 90;
+                    drawWidth = width;
+                    drawHeight = -height;
+                    break;
+                //iphone竖屏拍摄，此时home键在上方
+                case 8:
+                    canvas.width = height;
+                    canvas.height = width; 
+                    degree = 270;
+                    drawWidth = -width;
+                    drawHeight = height;
+                    break;
+            }
+            //使用canvas旋转校正
+            context.rotate(degree * Math.PI / 180);
+            context.drawImage(this, 0 , 0, drawWidth, drawHeight);
+            next(canvas.toDataURL(0.7));
+        }
+        image.src = img;
+    },
+    storeLabel: [ '环境优雅', '设备完善', '价格合理', '下次还来', '环境一般', '设施一般', '性价比低', '有待提高', '环境恶劣', '设施陈旧', '价格坑爹', '绝不再来'
+    ],
+    tecLabel: [ '服务热情', '手法专业', '态度很好', '颜值爆表', '服务一般', '手法一般', '态度一般', '看的过去', '服务太差', '手法太差', '态度恶劣', '惨不忍睹'
+    ]
+};
+Array.prototype.remove = function(val) {
+  var index = this.indexOf(val);
+  if (index > -1) {
+    this.splice(index, 1);
+  }
+};
+Date.prototype.format = function(format) {
+   var date = {
+          "M+": this.getMonth() + 1,
+          "d+": this.getDate(),
+          "h+": this.getHours(),
+          "m+": this.getMinutes(),
+          "s+": this.getSeconds(),
+          "q+": Math.floor((this.getMonth() + 3) / 3),
+          "S+": this.getMilliseconds()
+   };
+   if (/(y+)/i.test(format)) {
+          format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+   }
+   for (var k in date) {
+          if (new RegExp("(" + k + ")").test(format)) {
+                 format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                        ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+          }
+   }
+   return format;
+}
+var showWebLogo = function(){
+    if($.cookie('logo')){
+        $('.logo').html('<img src="'+ $.cookie('logo') +'">');
+    }
+    if($.cookie('webName')){
+        $('#shopTopName').text($.cookie('webName'));
+    }
+}
+var getCookie = function(){
+    $('.selectd span').html('');
+    $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_people')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_people') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_hand')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_hand') ).text +'</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
+    if($.cookie('order_project')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
+        $('.order-menu').find('a:eq(2)').addClass('active');
+    }
+    if($.cookie('order_tech')){
+        $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
+        $('.order-menu').find('a:eq(3)').addClass('active');
+    }
+    if($.cookie('order_room')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
+        $('.order-menu').find('a:eq(4)').addClass('active');
+    }
+};
+$(function(){
+    if (!!window.ActiveXObject || "ActiveXObject" in window)  {
+        $('body').before('<div class="chrome">您的浏览器版本过低，部分功能无法使用，请下载chrome谷歌浏览器！<a href="http://rj.baidu.com/soft/detail/14744.html" target="_blank">去下载</a></div>')
+    };
+    showWebLogo();
+    // 删除cookies
+    $('.add-item').click(function(){ $.cookie( 'editID', null); });
+    // 退出
+    $('#exit').click(function(){
+      if(confirm('确定退出吗？')){
+        $.cookie( 'accessToken', null);
+        Common.backLogin();
+      }
+    });
+    // 
+    $('input').focus(function(){
+        $(this).css('border-color', '#f6bd73');
+    });
+    $('input').blur(function(){
+        $(this).css('border-color', '#ddd');
+    });
+});
+    
+</script>
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(3)').addClass('active');
+    // 
+    var getProjects = function(){
+        var _data = {
+            token: $.cookie('accessToken')
+        };
+        // if($.cookie('order_people')) _data.tid = JSON.parse( $.cookie('order_people') ).id;
+        $.post(API.getUsherList, _data, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.object || data.object.length <=0 ){
+                $('.no').show();
+                return;
+            }
+            $('tbody').html('');
+            for(var i=0; i<data.object.length; i++){
+                var _data = data.object[i];
+                var chooseText = '';
+                if($.cookie('order_people') && JSON.parse( $.cookie('order_people') ).id == _data.staff_id){
+                    chooseText = '<a class="choose active">选择</a>';
+                }else{
+                    chooseText = '<a class="choose">选择</a>';
+                }
+                $('tbody').append('\
+                    <tr data-id="'+_data.staff_id+'">\
+                        <td class="head"><img src="'+ HOST + _data.staff_head+'"></td>\
+                        <td class="num">'+_data.staff_num+'</td>\
+                        <td class="name">'+_data.staff_name+'</td>\
+                        <td class="text-right">'+ chooseText +'</td>\
+                    </tr>');
+            }
+        });
+    }
+    getProjects();
+    
+    // 选择
+    $('tbody').on('click', '.choose', function(){
+        if($(this).attr('class').indexOf('active') >= 0){
+            $(this).removeClass('active');
+            $.cookie('order_people', null);
+        }else{
+            var id = $(this).parent().parent().attr('data-id');
+            var text = '迎宾:'+$(this).parent().parent().find('.num').text()+' 昵称:'+$(this).parent().parent().find('.name').text();
+            $('tbody').find('.choose').removeClass('active');
+            $(this).addClass('active');
+            var json = {
+                id: id,
+                text: text
+            };
+            $.cookie('order_people', JSON.stringify(json));
+            if( $.cookie('order_room') && $.cookie('order_tech') && $.cookie('order_people') ){
+                window.location.href = "order-submit.html";
+            }
+        }
+        getCookie();
+    });
+    getCookie();
+})
+</script>
+</body>
+</html>

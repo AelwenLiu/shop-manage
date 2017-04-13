@@ -1,0 +1,101 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title">人员列表</div>
+        <table class="pro-table">
+            <thead>
+                <th class="center">头像</th>
+                <th class="center">工号</th>
+                <th class="center">昵称</th>
+                <th class="center">职位</th>
+                <th class="center">上架</th>
+                <th class="center">下架</th>
+                <th class="center">操作</th>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div class="no"><i class="iconfont">&#xe604;</i>您还没有发布任何人员哦</div>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(5)').find('dd:eq(0)').addClass('active');
+    // 
+    var getProjects = function(){
+        $.post(API.addStaffList, {
+            token: $.cookie('accessToken')
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.object || data.object.length <=0 ){
+                $('.no').show();
+                $('.pro-table').hide();
+                return;
+            }
+            for(var i=0; i<data.object.length; i++){
+                var _data = data.object[i];
+                // 状态
+                var type = '';
+                var lowerHTML = '';
+                var topHTML = '';
+                if(_data.staff_status == 1){
+                    topHTML = '<input type="radio" class="top" checked>';
+                    lowerHTML = '<input type="radio" class="lower">';
+                }else{
+                    topHTML = '<input type="radio" class="top">';
+                    lowerHTML = '<input type="radio" class="lower" checked>';
+                }
+                if(_data.staff_type == 1) type = '迎宾';
+                if(_data.staff_type == 2) type = '收银';
+                if(_data.staff_type == 3) type = '保洁';
+                $('tbody').append('\
+                    <tr data-id="'+_data.staff_id+'" data-statu="'+_data.staff_status+'">\
+                        <td class="center"><img src="'+HOST+_data.staff_head+'" alt="" class="head"></td>\
+                        <td class="center">'+_data.staff_num+'</td>\
+                        <td class="center">'+_data.staff_name+'</td>\
+                        <td class="center bold">'+type+'</td>\
+                        <td class="center">'+topHTML+'</td>\
+                        <td class="center">'+lowerHTML+'</td>\
+                        <td class="center"><a href="javascript:;" class="edit">修改</a></td>\
+                    </tr>');
+            }
+        });
+    }
+    getProjects();
+    // 上下架
+    $('tbody').on('click', 'input', function(){
+        if($(this).parent().parent('tr').attr('data-statu') == 1 && $(this).hasClass('top')) return;
+        if($(this).parent().parent('tr').attr('data-statu') == 2 && $(this).hasClass('lower')) return;
+        var type = 'staff';
+            pid = $(this).parent().parent('tr').attr('data-id');
+            action = $(this).attr('class');
+        $().popup({loading: 'true'});
+        $.post(API.updateState, {
+            token: $.cookie('accessToken'),
+            type: type,
+            pid: pid,
+            action: action
+        }, function(data){
+            $().popup({loading: 'false'});
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            action=='top' ? alert('上架成功') : alert('下架成功');
+            location.reload();
+        });
+    });
+    // 修改
+    $('tbody').on('click', '.edit', function(){
+        $.cookie( 'editID', $(this).parent().parent('tr').attr('data-id') );
+        window.location.href = "people-add.html";
+    });
+})
+</script>
+</body>
+</html>

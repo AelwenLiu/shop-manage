@@ -5,25 +5,30 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta name="format-detection" content="telphone=no, email=no"/>
     <title>养生汇系统</title>
-    <link rel="stylesheet" href="./css/base.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/function.css?v=0.0.4">
-    <link rel="stylesheet" href="./css/style.css?v=0.0.4">
+    <link rel="stylesheet" href="./css/base.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/function.css?v=0.0.6">
+    <link rel="stylesheet" href="./css/style.css?v=0.0.6">
 </head>
 <body>
 <div class="menu-container">
     <div class="main">
         <div class="logo">店铺LOGO</div>
         <div class="shop-info"><span id="shopTopName"></span> <a id="exit">退出</a></div>
-        <a class="menu" href="#"><img src="img/ico-vip.png"></a>
+        <a class="menu" href="vip.html"><img src="img/ico-vip.png"></a>
         <a class="menu" href="shop.html"><img src="img/ico-submit.png"></a>
         <a class="menu" href="order-list.html"><img src="img/ico-order.png"></a>
         <a class="menu" href="order-choose-project.html"><img src="img/ico-shop.png"></a>
+        <a class="menu" href="rank-tech.html"><img src="img/ico-rank.png"></a>
     </div>
 </div>
 <div class="main-container order-container">
 <div class="order-info-container">
     <div class="info-title-h1">订单详情</div>
-    <div class="title">订单号：<span id="orderNo"></span></div>
+    <div class="title">
+        订单号：<span id="orderNo"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+        交易时间：<span id="orderDateTime"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+        付款时间：<span id="orderPayTime"></span>
+    </div>
     <table id="h1Info" class="info-table width left">
         <tbody>
             <tr>
@@ -32,13 +37,49 @@
             </tr>
         </tbody>
     </table>
-    <div class="order-infos">
+    <!-- <div class="order-infos">
         订单状态：<span id="orderStatus"></span><br>
         订单金额：<span id="orderMoney" class="show-color"></span><br>
         交易时间：<span id="orderDateTime"></span><br>
         付款时间：<span id="orderPayTime"></span><br>
+    </div> -->
+    <div class="order-width">
+    <div class="title">订单信息</div>
+    <table class="info-table">
+        <thead>
+            <tr>
+                <th>订单状态</th>
+                <th>订单金额</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="show-color"><span id="orderStatus"></span></td>
+                <td class="show-color"><span id="orderMoney"></span></td>
+            </tr>
+        </tbody>
+    </table>
     </div>
     
+    <div class="order-width">
+    <div class="title">迎宾/手牌</div>
+    <table class="info-table">
+        <thead>
+            <tr>
+                <th width="50%">迎宾</th>
+                <th>手牌</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="peopleInfo"></td>
+                <td id="handInfo"></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <div class="order-width">
     <div class="title">房间信息</div>
     <table class="info-table">
         <thead>
@@ -54,15 +95,21 @@
             </tr>
         </tbody>
     </table>
+    </div>
+
+    <div class="order-width">
     <div class="title">技师信息</div>
-    <table class="info-table width left">
+    <table class="info-table left">
         <tbody>
             <tr>
-                <td width="100"><img id="techHead" src="" class="haed"></td>
-                <td class="tech-cookies"></td>
+                <td width="100" style="padding: 4px;"><img id="techHead" src="" class="haed"></td>
+                <td class="tech-cookies" style="padding: 0;"></td>
             </tr>
         </tbody>
     </table>
+    </div>
+    <div class="clear"></div>
+
     <div class="title">项目信息</div>
     <table class="info-table width">
         <thead>
@@ -91,6 +138,22 @@
         </tbody>
     </table>
 
+    <div class="title">商品消费 <a id="editGoods">管理</a></div>
+    <table class="info-table width">
+        <thead>
+            <tr>
+                <th>图片</th>
+                <th>名称</th>
+                <th>价格</th>
+                <th>数量</th>
+            </tr>
+        </thead>
+        <tbody id="cusGoods"></tbody>
+        <tr id="goodsPrice">
+            <td style="text-align: left;" colspan="4">总价：￥<span></span></td>
+        </tr>
+    </table>
+
     <div class="price-container">
         <div class="left-p">
             <a class="btn-add"><i class="iconfont">&#xe61f;</i> 添加其他变动金额</a>
@@ -115,13 +178,27 @@
         <div class="clear"></div>
     </div>
     <div class="position-price">
-        <!-- <a class="submit">确认付款</a> -->
         <div class="p no-status-pay">应付金额：<span id="payNub"></span></div>
         <div class="p success-status-pay" style="display: none;">实付金额：<span id="sucPay"></span></div>
     </div>
 </div>
 </div>
-<div class="main-footer">&copy; 2016-2017强适信息科技（上海）有限公司</div>
+
+<div class="dialog big consume-container">
+    <div class="title">选择商品<a class="close">&times;</a></div>
+    <div class="container">
+        <table class="table-default">
+            <tbody class="tbody"></tbody>
+            <tr>
+                <td align="center" colspan="4">
+                    <button class="btn btn-default btn-small close">取消</button>
+                    <button class="btn btn-show btn-small" id="selectGood">确定</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="main-footer">沪ICP备16046454号-2 &copy; 2016-2017强适信息科技（上海）有限公司</div>
 <script type="text/javascript" src="./js/jQuery/jquery-1.8.3.min.js"></script>
 <script type="text/javascript" src="./js/jQuery/jquery.cookie.js"></script>
 <script type="text/javascript" src="./js/jquery.popup.js"></script>
@@ -227,17 +304,25 @@ var showWebLogo = function(){
 var getCookie = function(){
     $('.selectd span').html('');
     $('.order-menu').find('a').removeClass('active');
+    if($.cookie('order_people')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_people') ).text +'</a>');
+        $('.order-menu').find('a:eq(0)').addClass('active');
+    }
+    if($.cookie('order_hand')){
+        $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_hand') ).text +'</a>');
+        $('.order-menu').find('a:eq(1)').addClass('active');
+    }
     if($.cookie('order_project')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_project') ).text +'</a>');
-        $('.order-menu').find('a:eq(0)').addClass('active');
+        $('.order-menu').find('a:eq(2)').addClass('active');
     }
     if($.cookie('order_tech')){
         $('.selectd span').append('<a>工号: '+ JSON.parse( $.cookie('order_tech') ).no + ' 昵称: ' + JSON.parse( $.cookie('order_tech') ).nick + '</a>');
-        $('.order-menu').find('a:eq(1)').addClass('active');
+        $('.order-menu').find('a:eq(3)').addClass('active');
     }
     if($.cookie('order_room')){
         $('.selectd span').append('<a>'+ JSON.parse( $.cookie('order_room') ).no +'</a>');
-        $('.order-menu').find('a:eq(2)').addClass('active');
+        $('.order-menu').find('a:eq(4)').addClass('active');
     }
 };
 $(function(){
@@ -254,19 +339,132 @@ $(function(){
         Common.backLogin();
       }
     });
+    // 
+    $('input').focus(function(){
+        $(this).css('border-color', '#f6bd73');
+    });
+    $('input').blur(function(){
+        $(this).css('border-color', '#ddd');
+    });
 });
+    
 </script>
 <script type="text/javascript">
 $(function(){
     $('.main').find('.menu:eq(2)').addClass('active');
     var id = $.cookie('order_info_id');
     var type = 0;
+    var goodsInfoId = [];
     var changePrice = {
         prePrice: 0,
         addPrice: 0,
         preText: '',
         addText: ''
     };
+    $('#peopleInfo').on('click', '#btnEditPeople', function(event) {
+        var _html = $('#peopleInfo').html();
+        var _id = $(this).attr('data-id');
+        $.post(API.getUsherList, {
+            token: $.cookie('accessToken')
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);Common.backLogin();return;}
+            if(!data.object || data.object.length <=0 ){
+                alert('还没有添加迎宾')
+                return;
+            }
+            var option = '';
+            for(var i=0; i<data.object.length; i++){
+                var _data = data.object[i];
+                if(_id == _data.staff_id){
+                    option+= '<option value="'+_data.staff_id+'" selected>'+_data.staff_name+'</option>';
+                }else{
+                    option+= '<option value="'+_data.staff_id+'">'+_data.staff_name+'</option>';
+                }
+            }
+            $('#peopleInfo').html('<select id="newPeople">'+option+'</select><br><br><a class="btn-ok">确定</a><a class="btn-can">取消</a>');
+            $('.btn-can').click(function(){ $('#peopleInfo').html(_html); });
+            $('.btn-ok').click(function(){ 
+                $.post(API.add_usher_order, {
+                    token: $.cookie('accessToken'),
+                    id: id,
+                    sid: $('#newPeople').val(),
+                }, function(data){
+                    if(data.errorInfo){alert(data.errorInfo);return;}
+                    location.reload();
+                });
+            });
+        });
+    });
+    $('#editGoods').click(function(event) {
+        $().popup({loading: 'true'});
+        $.post(API.getThisOrderGoods, {
+            token: $.cookie('accessToken'),
+            pid: id
+        }, function(data){
+            var goodList = data.list ? data.list : [];
+            $.post(API.addGoodsList, {
+                token: $.cookie('accessToken'),
+                state: 1
+            }, function(data){
+                if(data.errorInfo){alert(data.errorInfo);return;}
+                $().popup({container: '.consume-container'});
+                $().popup({loading: 'false'});
+                $('.consume-container .tbody').html('');
+                for(var i=0; i<data.list.length; i++){
+                    var _data = data.list[i];
+                    // 数量
+                    var numHtml = '<input type="text" value="0">';
+                    for(var j=0; j<goodList.length; j++){
+                        if(goodList[j].id == _data.goods_id){
+                            numHtml = '<input type="text" value="'+goodList[j].num+'">';
+                        }
+                    }
+                    $('.consume-container .tbody').append('\
+                        <tr data-id="'+_data.goods_id+'">\
+                            <td width="50"><img src="'+HOST+_data.goods_head+'" alt="" class="head"></td>\
+                            <td>'+_data.goods_name+'</td>\
+                            <td width="80" class="center">￥'+_data.goods_price+'</td>\
+                            <td width="100" class="center"><div class="number-compass"><a class="left">-</a>'+ numHtml +'<a class="right">+</a></div></td>\
+                        </tr>');
+                }
+            });
+        });
+    });
+    $('.consume-container .tbody').on('click', '.left', function(){
+        var _v = parseInt($(this).next().val());
+        if(_v==0) return;
+        $(this).next().val(_v - 1);
+        setGoodId();
+    });
+    $('.consume-container .tbody').on('click', '.right', function(){
+        var _v = parseInt($(this).prev().val());
+        $(this).prev().val(_v + 1);
+        setGoodId();
+    });
+    var setGoodId = function(){
+        goodsInfoId = [];
+        for(var i=0; i<$('.consume-container .tbody tr').length; i++){
+            for(var j=0; j<$('.consume-container .tbody tr:eq('+i+')').find('input').val(); j++){
+                goodsInfoId.push($('.consume-container .tbody tr:eq('+i+')').attr('data-id'));
+            }
+        }
+    }
+    $('#selectGood').click(function(){
+        if(goodsInfoId.length == 0){
+            alert('请添加或修改商品');
+            return;
+        }
+        $.post(API.addGoodsThisOrder, {
+            token: $.cookie('accessToken'),
+            id: id,
+            goods: goodsInfoId,
+        }, function(data){
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('添加成功');
+            window.location.reload();
+        });
+    })
+        
     var getOrderInfo = function(){
         $().popup({loading: 'true'});
         $.post(API.getThisOrderInfo, {
@@ -287,7 +485,10 @@ $(function(){
                 $('#roomNo').text(order.order_room_num);
             }
             $('#techHead').attr('src', HOST + order.massagist_photo);
-            $('.tech-cookies').html('工号：' + order.massagist_no + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;昵称：' + order.massagist_name);
+            $('.tech-cookies').html('工号：' + order.massagist_no + '<br><br>昵称：' + order.massagist_name);
+            order.staff_name ? $('#peopleInfo').text( order.staff_name ) : $('#peopleInfo').text('暂无');
+            $('#peopleInfo').append('<a id="btnEditPeople" data-id="'+order.order_staff_id+'" class="btn-p-e">添加/修改</a>')
+            order.hand_name ? $('#handInfo').text( order.hand_name ) : $('#handInfo').text('暂无');
             // 状态
             var statusBtn = '';
             var statusText = '';
@@ -366,24 +567,38 @@ $(function(){
                 $('.vipValue').text('￥'+order.item_vipprice);
                 $('input[name="vip"]:eq(1)').attr('checked', true);
             }
-            // if(!changePrice.prePrice){
-            //     changePrice.prePrice = order.order_discount_price;
-            //     $('#preMoney').val(changePrice.prePrice);
-            //     $('.preMoney').text(changePrice.prePrice);
-            // }
-            // if(!changePrice.addPrice){
-            //     changePrice.addPrice = order.order_add_price;
-            //     $('#addMoney').val(changePrice.addPrice);
-            //     $('.addMoney').text(changePrice.addPrice);
-            // }
-            // if(!$('#preText').val()) $('#preText').val(order.order_reduce);
-            // if(!$('#addText').val()) $('#addText').val(order.order_increase);
-            $('#payNub').text('￥'+($('.vipValue').text().split('￥')[1]-changePrice.prePrice) );
+            $('#payNub').text('￥'+order.order_totalprice );
+            // $('#payNub').text('￥'+($('.vipValue').text().split('￥')[1]-changePrice.prePrice) );
             var _ =(parseFloat($('#payNub').text().split('￥')[1])+parseFloat(changePrice.addPrice));
             $('#payNub').text('￥'+ _);
         });
     }
     getOrderInfo();
+
+    // 获取商品消费信心
+    $.post(API.getThisOrderGoods, {
+        token: $.cookie('accessToken'),
+        pid: id
+    }, function(data){
+        $('#cusGoods').html('');
+        var goodList = data.list ? data.list : [];
+        if(goodList.length == 0){
+            $('#cusGoods').html('<tr><td colspan="4">暂无</td></tr>');
+            $('#goodsPrice').hide();
+        }else{
+            $('#goodsPrice span').text(data.object);
+        }
+        for(var i=0; i<goodList.length; i++){
+            var _data = goodList[i];
+            $('#cusGoods').append('\
+                <tr>\
+                    <td width="80"><img src="'+HOST+_data.image+'" width="80" class="head"></td>\
+                    <td>'+_data.name+'</td>\
+                    <td class="center">￥'+_data.price+'</td>\
+                    <td class="center">'+_data.num+'</td>\
+                </tr>');
+        }
+    });
     // 价格变动
     $('#submitPre').click(function(){
         changePrice.prePrice = parseFloat( $('#preMoney').val() ).toFixed(1);

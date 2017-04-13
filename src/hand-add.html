@@ -1,0 +1,60 @@
+<!--include "../include/head.html"-->
+<body>
+<!--include "../include/menu.html"-->
+<div class="main-container">
+    <div class="c-left">
+        <!--include "../include/left.html"-->
+    </div>
+    <div class="c-right">
+        <div class="title" id="varTitle">添加手牌</div>
+        <div class="section">
+            <table class="table-default">
+                <tr>
+                    <td width="100">手牌号</td>
+                    <td><input id="handNo" type="text" class="input-small"></td>
+                </tr>
+                
+            </table>
+        </div>
+        <button class="btn btn-show" id="submit">发布</button>
+        <button class="btn btn-hide">发布中...</button>
+    </div>
+    <div class="clear"></div>
+</div>
+<!--include "../include/copy.html"-->
+<!--include "../include/script.html"-->
+<script type="text/javascript">
+$(function(){
+    $('.main').find('.menu:eq(1)').addClass('active');
+    $('.c-left').find('dl:eq(4)').find('dd:eq(1)').addClass('active');
+
+    // 获取是否修改
+    if($.cookie('editID')){
+        $('#varTitle').text('修改手牌');
+        $('#handNo').val( $.cookie('editHandText') );
+    }
+    
+    // 发布
+    $('#submit').click(function(){
+        var handNo = $.trim( $('#handNo').val() );
+        if( !handNo ){
+            alert('手牌号码不能为空');
+            return;
+        }
+        $('#submit').hide().next('.btn-hide').show();
+        var _data = {
+            token: $.cookie('accessToken'),
+            name: handNo
+        };
+        if($.cookie('editID')) _data.id = $.cookie('editID');
+        $.post(API.addHand, _data, function(data){
+            $('#submit').show().next('.btn-hide').hide();
+            if(data.errorInfo){alert(data.errorInfo);return;}
+            alert('发布成功');
+            window.location.href = "hand-list.html";
+        });
+    });
+})
+</script>
+</body>
+</html>
